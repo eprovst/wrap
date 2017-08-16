@@ -18,9 +18,10 @@ func writeOutput(content string, path string) error {
 func main() {
 	app := cli.NewApp()
 	app.Name = "Feltix"
-	app.Version = "v0.0.1"
+	app.Version = "v0.0.1-indev"
 	app.Usage = "Generate HTML (and somewhere in the future PDF) output from Fountain"
 	app.Author = "Evert Provoost"
+	app.HideHelp = true
 	app.Commands = []cli.Command{
 		{
 			Name:     "html",
@@ -28,6 +29,11 @@ func main() {
 			Category: "Export formats",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
+
+				if pathToFile == "" {
+					cli.ShowCommandHelpAndExit(c, "html", 0)
+				}
+
 				extension := strings.ToLower(filepath.Ext(pathToFile))
 
 				// Check if we're using the feltix extensions
@@ -37,12 +43,23 @@ func main() {
 
 				script, err := feltixparser.ParseFile(pathToFile)
 
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+
 				// Get the filepath to use during export.
 				pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
 
 				html := feltixhtml.ToHTML(script)
-				writeOutput(html, pathToFile)
-				return err
+				err = writeOutput(html, pathToFile)
+
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+
+				return nil
 			},
 		},
 		/*{
@@ -51,6 +68,11 @@ func main() {
 			Category: "Export formats:",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
+
+				if pathToFile == "" {
+					cli.ShowCommandHelpAndExit(c, "pdf", 0)
+				}
+
 				extension := strings.ToLower(filepath.Ext(pathToFile))
 
 				// Check if we're using the feltix extensions
@@ -60,12 +82,23 @@ func main() {
 
 				script, err := feltixparser.ParseFile(pathToFile)
 
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+
 				// Get the filepath to use during export.
 				pathToFile = strings.TrimSuffix(pathToFile, extension) + "pdf"
 
 				html := feltixpdf.ToPDF(script)
-				writeOutput(html, pathToFile)
-				return err
+				err = writeOutput(html, pathToFile)
+
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+
+				return nil
 			},
 		},*/
 	}
