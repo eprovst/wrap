@@ -28,10 +28,10 @@ func main() {
 			Category: "Export formats",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
-				extension := filepath.Ext(pathToFile)
+				extension := strings.ToLower(filepath.Ext(pathToFile))
 
 				// Check if we're using the feltix extensions
-				if extension == ".ftx" {
+				if extension == ".ftx" || extension == ".feltix" {
 					feltixparser.UseFeltixExtensions = true
 				}
 
@@ -51,10 +51,10 @@ func main() {
 			Category: "Export formats:",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
-				extension := filepath.Ext(pathToFile)
+				extension := strings.ToLower(filepath.Ext(pathToFile))
 
 				// Check if we're using the feltix extensions
-				if extension == "ftx" {
+				if extension == ".ftx" || extension == ".feltix" {
 					feltixparser.UseFeltixExtensions = true
 				}
 
