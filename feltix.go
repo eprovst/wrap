@@ -11,10 +11,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-func writeOutput(content string, path string) error {
-	return ioutil.WriteFile(path, []byte(content), 0664)
-}
-
 func main() {
 	app := cli.NewApp()
 	app.Name = "Feltix"
@@ -22,11 +18,17 @@ func main() {
 	app.Usage = "Generate HTML (and somewhere in the future PDF) output from Fountain"
 	app.Author = "Evert Provoost"
 	app.HideHelp = true
+	app.ArgsUsage = "path/to/file"
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "out, o",
+			Usage: "specify the `file` name to be used",
+		},
+	}
 	app.Commands = []cli.Command{
 		{
-			Name:     "html",
-			Usage:    "Export file as an HTML webpage",
-			Category: "Export formats",
+			Name:  "html",
+			Usage: "export file as an HTML webpage",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
 
@@ -49,10 +51,14 @@ func main() {
 				}
 
 				// Get the filepath to use during export.
-				pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
+				if c.GlobalString("out") != "" {
+					pathToFile = c.GlobalString("out")
+				} else {
+					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
+				}
 
 				html := feltixhtml.ToHTML(script)
-				err = writeOutput(html, pathToFile)
+				err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 
 				if err != nil {
 					println(err.Error())
@@ -64,8 +70,7 @@ func main() {
 		},
 		/*{
 			Name:    "pdf",
-			Usage:   "Export file as PDF",
-			Category: "Export formats:",
+			Usage:   "export file as PDF",
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
 
@@ -88,10 +93,14 @@ func main() {
 				}
 
 				// Get the filepath to use during export.
-				pathToFile = strings.TrimSuffix(pathToFile, extension) + "pdf"
+				if c.GlobalString("out") != "" {
+					pathToFile = c.GlobalString("out")
+				} else {
+					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".pdf"
+				}
 
-				html := feltixpdf.ToPDF(script)
-				err = writeOutput(html, pathToFile)
+				pdf := feltixpdf.ToPDF(script)
+				err = ioutil.WriteFile(pathToFile, []byte(pdf), 0664)
 
 				if err != nil {
 					println(err.Error())
