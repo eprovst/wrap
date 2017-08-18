@@ -8,8 +8,9 @@ confinement: strict
 apps:
   feltix:
     command: feltix
+    plugs: [home, removable-media]
 
 parts:
-  gnu-hello:
+  feltix-cli:
     plugin: go
-    go-packages: [github.com/Feltix/feltix]
+    source: https://github.com/Feltix/feltix.git
