@@ -13,4 +13,4 @@ apps:
 parts:
   feltix-cli:
     plugin: go
-    source: https://github.com/Feltix/feltix.git
+    go-packages: [github.com/Feltix/feltix]
