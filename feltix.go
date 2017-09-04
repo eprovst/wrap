@@ -29,6 +29,12 @@ func main() {
 		{
 			Name:  "html",
 			Usage: "export file as an HTML webpage",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "embedable, e",
+					Usage: "only output the play itself",
+				},
+			},
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
 
@@ -57,7 +63,13 @@ func main() {
 					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
 				}
 
-				html := feltixhtml.ToHTML(script)
+				var html string
+				if c.Bool("embedable") {
+					html = feltixhtml.ToHTML(script)
+				} else {
+					html = feltixhtml.ToHTMLPage(script)
+				}
+
 				err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 
 				if err != nil {
