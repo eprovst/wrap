@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/Feltix/feltixhtml"
 	"github.com/Feltix/feltixparser"
@@ -23,6 +24,10 @@ func main() {
 		cli.StringFlag{
 			Name:  "out, o",
 			Usage: "specify the `file` name to be used",
+		},
+		cli.BoolFlag{
+			Name:  "benchmark",
+			Usage: "measure the time spend on certain tasks",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -49,7 +54,16 @@ func main() {
 					feltixparser.UseFeltixExtensions = true
 				}
 
-				script, err := feltixparser.ParseFile(pathToFile)
+				file, err := os.Open(pathToFile)
+				defer file.Close() // Make sure it's closed at one point.
+
+				if err != nil {
+					println(err.Error())
+					return err
+				}
+
+				t0 := time.Now()
+				script, err := feltixparser.Parser(file)
 
 				if err != nil {
 					println(err.Error())
@@ -63,18 +77,29 @@ func main() {
 					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
 				}
 
+				t1 := time.Now()
 				var html string
 				if c.Bool("embedable") {
 					html = feltixhtml.ToHTML(script)
 				} else {
 					html = feltixhtml.ToHTMLPage(script)
 				}
+				t2 := time.Now()
 
 				err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 
 				if err != nil {
 					println(err.Error())
 					return err
+				}
+
+				if c.GlobalBool("benchmark") {
+					print("Parsing:   ")
+					print(t1.Sub(t0) / time.Millisecond)
+					println(" ms")
+					print("Exporting: ")
+					print(t2.Sub(t1) / time.Millisecond)
+					println(" ms")
 				}
 
 				return nil
