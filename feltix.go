@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Feltix/feltixpdf"
+
 	"github.com/Feltix/feltixhtml"
 	"github.com/Feltix/feltixparser"
 	"github.com/urfave/cli"
@@ -15,20 +17,20 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "Feltix"
-	app.Version = "v0.0.1-indev"
-	app.Usage = "Generate HTML (and somewhere in the future PDF) output from Fountain"
+	app.Version = "v0.1.0"
+	app.Usage = "Generate HTML and/or PDF output from Fountain files"
 	app.Author = "Evert Provoost"
+	app.Email = "evert.provoost@gmail.com"
 	app.HideHelp = true
 	app.ArgsUsage = "path/to/file"
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "out, o",
-			Usage: "specify the `file` name to be used",
-		},
 		cli.BoolFlag{
 			Name:  "benchmark",
 			Usage: "measure the time spend on certain tasks",
 		},
+	}
+	app.Action = func(c *cli.Context) error {
+		return cli.ShowAppHelp(c)
 	}
 	app.Commands = []cli.Command{
 		{
@@ -38,6 +40,14 @@ func main() {
 				cli.BoolFlag{
 					Name:  "embedable, e",
 					Usage: "only output the play itself",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Usage: "specify the `file` name to be used",
+				},
+				cli.BoolFlag{
+					Name:  "noscenenumbers, s",
+					Usage: "remove scnenenumbers from output",
 				},
 			},
 			Action: func(c *cli.Context) error {
@@ -54,16 +64,8 @@ func main() {
 					feltixparser.UseFeltixExtensions = true
 				}
 
-				file, err := os.Open(pathToFile)
-				defer file.Close() // Make sure it's closed at one point.
-
-				if err != nil {
-					println(err.Error())
-					return err
-				}
-
 				t0 := time.Now()
-				script, err := feltixparser.Parser(file)
+				script, err := feltixparser.ParseFile(pathToFile)
 
 				if err != nil {
 					println(err.Error())
@@ -71,28 +73,32 @@ func main() {
 				}
 
 				// Get the filepath to use during export.
-				if c.GlobalString("out") != "" {
-					pathToFile = c.GlobalString("out")
+				if c.String("out") != "" {
+					pathToFile = c.String("out")
 				} else {
 					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
 				}
 
 				t1 := time.Now()
 				var html string
+
+				if c.Bool("noscenenumbers") {
+					feltixhtml.AddSceneNumbers = false
+				}
+
 				if c.Bool("embedable") {
 					html = feltixhtml.ToHTML(script)
+					err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 				} else {
-					html = feltixhtml.ToHTMLPage(script)
+					err = feltixhtml.WriteHTMLPage(script, pathToFile)
 				}
-				t2 := time.Now()
-
-				err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 
 				if err != nil {
 					println(err.Error())
 					return err
 				}
 
+				t2 := time.Now()
 				if c.GlobalBool("benchmark") {
 					print("Parsing:   ")
 					print(t1.Sub(t0) / time.Millisecond)
@@ -100,14 +106,27 @@ func main() {
 					print("Exporting: ")
 					print(t2.Sub(t1) / time.Millisecond)
 					println(" ms")
+					print("Total:     ")
+					print(t2.Sub(t0) / time.Millisecond)
+					println(" ms")
 				}
 
 				return nil
 			},
 		},
-		/*{
-			Name:    "pdf",
-			Usage:   "export file as PDF",
+		{
+			Name:  "pdf",
+			Usage: "export file as PDF",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "out, o",
+					Usage: "specify the `file` name to be used",
+				},
+				cli.BoolFlag{
+					Name:  "noscenenumbers, s",
+					Usage: "remove scnenenumbers from output",
+				},
+			},
 			Action: func(c *cli.Context) error {
 				pathToFile := c.Args().First()
 
@@ -122,6 +141,7 @@ func main() {
 					feltixparser.UseFeltixExtensions = true
 				}
 
+				t0 := time.Now()
 				script, err := feltixparser.ParseFile(pathToFile)
 
 				if err != nil {
@@ -130,23 +150,40 @@ func main() {
 				}
 
 				// Get the filepath to use during export.
-				if c.GlobalString("out") != "" {
-					pathToFile = c.GlobalString("out")
+				if c.String("out") != "" {
+					pathToFile = c.String("out")
 				} else {
 					pathToFile = strings.TrimSuffix(pathToFile, extension) + ".pdf"
 				}
 
-				pdf := feltixpdf.ToPDF(script)
-				err = ioutil.WriteFile(pathToFile, []byte(pdf), 0664)
+				if c.Bool("noscenenumbers") {
+					feltixpdf.AddSceneNumbers = false
+				}
+
+				t1 := time.Now()
+				err = feltixpdf.WritePDFFile(script, pathToFile)
 
 				if err != nil {
 					println(err.Error())
 					return err
 				}
 
+				t2 := time.Now()
+				if c.GlobalBool("benchmark") {
+					print("Parsing:   ")
+					print(t1.Sub(t0) / time.Millisecond)
+					println(" ms")
+					print("Exporting: ")
+					print(t2.Sub(t1) / time.Millisecond)
+					println(" ms")
+					print("Total:     ")
+					print(t2.Sub(t0) / time.Millisecond)
+					println(" ms")
+				}
+
 				return nil
 			},
-		},*/
+		},
 	}
 
 	app.Run(os.Args)
