@@ -8,7 +8,10 @@ confinement: strict
 apps:
   feltix:
     command: feltix
-    plugs: [home, removable-media]
+    plugs:
+      - home
+      - desktop
+      - removable-media
 
 parts:
   feltix-cli:
