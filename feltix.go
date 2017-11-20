@@ -17,7 +17,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "Feltix"
-	app.Version = "v0.1.0"
+	app.Version = "v0.1.1"
 	app.Usage = "Generate HTML and/or PDF output from Fountain files"
 	app.Author = "Evert Provoost"
 	app.Email = "evert.provoost@gmail.com"
