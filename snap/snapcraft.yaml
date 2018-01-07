@@ -1,5 +1,5 @@
 name: feltix
-version: "v0.1.1"
+version: "v0.1.2"
 summary: A Fountain export tool with some extra's...
 description: Feltix is a parser/exporter for the Founatin format which also adds some extensions to said format.
 grade: devel
