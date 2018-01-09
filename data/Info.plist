@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>feltix</string>
+	<key>CFBundleIconFile</key>
+	<string>feltix.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.feltix</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>feltix</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>fltx</string>
+	<key>CFBundleVersion</key>
+	<string>0.1.2</string>
+	<key>CFBundleDisplayName</key>
+	<string>Feltix</string>
+</dict>
+</plist>
