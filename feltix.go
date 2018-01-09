@@ -1,3 +1,6 @@
+//go:generate goversioninfo
+// ^^ add icon to Windows build
+
 package main
 
 import (
