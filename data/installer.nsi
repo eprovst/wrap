@@ -46,9 +46,9 @@ FunctionEnd
 ;
 ; Usage:
 ;   Push "dir"
-;   Call AddToPath
+;   Call AddToExecPath
 
-Function AddToPath
+Function AddToExecPath
   Exch $0
   Push $1
   Push $2
@@ -58,8 +58,8 @@ Function AddToPath
   ; NSIS ReadRegStr returns empty string on string overflow
   ; Native calls are used here to check actual length of PATH
 
-  ; $4 = RegOpenKey(HKEY_CURRENT_USER, "Environment", &$3)
-  System::Call "advapi32::RegOpenKey(i 0x80000001, t'Environment', *i.r3) i.r4"
+  ; $4 = RegOpenKey(HKEY_LOCAL_MACHINE, ".....\Environment", &$3)
+  System::Call "advapi32::RegOpenKey(i 0x80000002, t'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', *i.r3) i.r4"
   IntCmp $4 0 0 done done
   ; $4 = RegQueryValueEx($3, "PATH", (DWORD*)0, (DWORD*)0, &$1, ($2=NSIS_MAX_STRLEN, &$2))
   ; RegCloseKey($3)
@@ -67,15 +67,15 @@ Function AddToPath
   System::Call "advapi32::RegCloseKey(i $3)"
 
   IntCmp $4 234 0 +4 +4 ; $4 == ERROR_MORE_DATA
-    DetailPrint "AddToPath: original length $2 > ${NSIS_MAX_STRLEN}"
-    MessageBox MB_OK "PATH not updated, original length $2 > ${NSIS_MAX_STRLEN}"
-    Goto done
+  DetailPrint "AddToPath: original length $2 > ${NSIS_MAX_STRLEN}"
+  MessageBox MB_OK "PATH not updated, original length $2 > ${NSIS_MAX_STRLEN}"
+  Goto done
 
   IntCmp $4 0 +5 ; $4 != NO_ERROR
-    IntCmp $4 2 +3 ; $4 != ERROR_FILE_NOT_FOUND
-      DetailPrint "AddToPath: unexpected error code $4"
-      Goto done
-    StrCpy $1 ""
+  IntCmp $4 2 +3 ; $4 != ERROR_FILE_NOT_FOUND
+  DetailPrint "AddToPath: unexpected error code $4"
+  Goto done
+  StrCpy $1 ""
 
   ; Check if already in PATH
   Push "$1;"
@@ -95,17 +95,17 @@ Function AddToPath
   IntOp $2 $2 + $3
   IntOp $2 $2 + 2 ; $2 = strlen(dir) + strlen(PATH) + sizeof(";")
   IntCmp $2 ${NSIS_MAX_STRLEN} +4 +4 0
-    DetailPrint "AddToPath: new length $2 > ${NSIS_MAX_STRLEN}"
-    MessageBox MB_OK "PATH not updated, new length $2 > ${NSIS_MAX_STRLEN}."
-    Goto done
+  DetailPrint "AddToPath: new length $2 > ${NSIS_MAX_STRLEN}"
+  MessageBox MB_OK "PATH not updated, new length $2 > ${NSIS_MAX_STRLEN}."
+  Goto done
 
   ; Append dir to PATH
   DetailPrint "Add to PATH: $0"
   StrCpy $2 $1 1 -1
   StrCmp $2 ";" 0 +2
-    StrCpy $1 $1 -1 ; remove trailing ';'
+  StrCpy $1 $1 -1 ; remove trailing ';'
   StrCmp $1 "" +2   ; no leading ';'
-    StrCpy $0 "$1;$0"
+  StrCpy $0 "$1;$0"
   WriteRegExpandStr ${Environ} "PATH" $0
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
@@ -122,9 +122,9 @@ FunctionEnd
 ;
 ; Usage:
 ;   Push "dir"
-;   Call RemoveFromPath
+;   Call RemoveFromExecPath
 
-Function un.RemoveFromPath
+Function un.RemoveFromExecPath
   Exch $0
   Push $1
   Push $2
@@ -136,7 +136,7 @@ Function un.RemoveFromPath
   ReadRegStr $1 ${Environ} "PATH"
   StrCpy $5 $1 1 -1
   StrCmp $5 ";" +2
-    StrCpy $1 "$1;" ; ensure trailing ';'
+  StrCpy $1 "$1;" ; ensure trailing ';'
   Push $1
   Push "$0;"
   Call un.StrStr
@@ -151,7 +151,7 @@ Function un.RemoveFromPath
   StrCpy $3 "$5$6"
   StrCpy $5 $3 1 -1
   StrCmp $5 ";" 0 +2
-    StrCpy $3 $3 -1 ; remove trailing ';'
+  StrCpy $3 $3 -1 ; remove trailing ';'
   WriteRegExpandStr ${Environ} "PATH" $3
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
@@ -213,7 +213,7 @@ WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"   
 File /oname=feltix.exe ../build/windows/feltix.exe
 
 Push $INSTDIR
-Call AddToPath
+Call AddToExecPath
 SectionEnd
 
 
@@ -223,7 +223,7 @@ Delete feltix.exe
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"
 
 Push $INSTDIR
-Call un.RemoveFromPath
+Call un.RemoveFromExecPath
 
 Delete "$INSTDIR\Uninstall.exe"
 RMDir "$INSTDIR"
