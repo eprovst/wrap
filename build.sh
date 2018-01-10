@@ -20,4 +20,7 @@ GOARCH=amd64 GOOS=darwin go build -o build/darwin/feltix
 echo "Packaging for macOS..."
 bash scripts/macos.sh
 
+echo "Packaging for Windows..."
+bash scripts/windows.sh
+
 echo "Build finished."
