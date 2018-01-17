@@ -2,10 +2,10 @@
 
 !define Name "Feltix"
 Name "${Name}"
-Outfile "../build/windows/${Name}_Win64.exe"
+Outfile "../dist/${Name}_Win64.exe"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
 InstallDir "$ProgramFiles64\${Name}"
-!define MUI_ICON "../icons/feltix.ico"
+!define MUI_ICON "../data/feltix.ico"
 
 !include LogicLib.nsh
 !include MUI.nsh
@@ -218,10 +218,10 @@ SectionEnd
 
 
 Section "uninstall"
-Delete feltix.exe
+
+Delete "$INSTDIR\feltix.exe"
 
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"
-
 Push $INSTDIR
 Call un.RemoveFromExecPath
 

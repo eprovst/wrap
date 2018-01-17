@@ -17,7 +17,7 @@
 
     <Media Id='1' Cabinet='feltix.cab' EmbedCab='yes' />
 
-    <Icon Id="feltix.ico" SourceFile="icons/feltix.ico" />
+    <Icon Id="feltix.ico" SourceFile="data/feltix.ico" />
     <Property Id="ARPPRODUCTICON" Value="feltix.ico" />
 
     <Directory Id='TARGETDIR' Name='SourceDir'>

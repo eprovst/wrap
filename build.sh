@@ -1,10 +1,10 @@
 #! /bin/bash
 
-echo "Removing previous build..."
-rm -rf build
-
 # Note: packaging and building for Linux
 #       is done through build.snapcraft.io
+
+echo "Removing old installers and packages..."
+rm -rf dist
 
 # Build for 64bit Windows
 echo "Building for Windows 64 bit..."
@@ -16,6 +16,8 @@ rm resource.syso # Remove resource.syso
 echo "Building for Darwin 64 bit..."
 GOARCH=amd64 GOOS=darwin go build -o build/darwin/feltix
 
+echo "Build finished. Start packaging..."
+
 # Packaging
 echo "Packaging for macOS..."
 bash scripts/macos.sh
@@ -23,4 +25,7 @@ bash scripts/macos.sh
 echo "Packaging for Windows..."
 bash scripts/windows.sh
 
-echo "Build finished."
+echo "Done packaging. Removing build files..."
+rm -rf build
+
+echo "Done."
