@@ -8,7 +8,7 @@ confinement: strict
 apps:
   feltix:
     command: feltix
-    completer: data/complete.sh
+    completer: ../data/complete.sh
     plugs:
       - home
       - desktop
