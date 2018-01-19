@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"path/filepath"
@@ -25,7 +25,7 @@ var pdfNoscenenumbersFlag bool
 func init() {
 	pdfCmd.Flags().BoolVarP(&pdfNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
 
-	rootCmd.AddCommand(pdfCmd)
+	FeltixCmd.AddCommand(pdfCmd)
 }
 
 func pdfRun(cmd *cobra.Command, args []string) {

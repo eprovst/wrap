@@ -3,6 +3,9 @@
 # Note: packaging and building for Linux
 #       is done through build.snapcraft.io
 
+echo "Updating data..."
+bash scripts/update_data.sh
+
 echo "Removing old installers and packages..."
 rm -rf dist
 

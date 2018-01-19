@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"io/ioutil"
@@ -30,7 +30,7 @@ func init() {
 	htmlCmd.Flags().BoolVarP(&htmlEmbedableFlag, "embedable", "e", false, "only output the play itself")
 	htmlCmd.Flags().BoolVarP(&htmlNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
 
-	rootCmd.AddCommand(htmlCmd)
+	FeltixCmd.AddCommand(htmlCmd)
 }
 
 func htmlRun(cmd *cobra.Command, args []string) {
