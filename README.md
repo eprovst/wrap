@@ -7,7 +7,7 @@ A Fountain import and export tool with some extra's...
 
 ## Overview
 Feltix is an open source command line tool that is able to convert Fountain and Feltix files into a correctly formatted
-screen- or stageplay as an HTML or PDF.
+screen- or stageplay as an HTML or a PDF.
 
 Fountain is an awesome format to write screenplays in English, Feltix builds upon this to add support for different
 languages and stageplays whilst still fully supporting normal Fountain files.
