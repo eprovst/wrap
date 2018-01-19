@@ -4,4 +4,4 @@
 
 # Generate bash autocompletion for snap
 go run scripts/generate_bashcompletion.go
-mv complete.sh snap/complete.sh
+mv complete.sh prime/complete.sh
