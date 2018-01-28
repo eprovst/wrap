@@ -12,12 +12,12 @@ rm -rf dist
 # Build for 64bit Windows
 echo "Building for Windows 64 bit..."
 go generate # Prepare resource.syso
-GOARCH=amd64 GOOS=windows go build -o build/windows/feltix.exe
+GOARCH=amd64 GOOS=windows go build -o build/windows/wrap.exe
 rm resource.syso # Remove resource.syso
 
 # Build for 64bit Darwin
 echo "Building for Darwin 64 bit..."
-GOARCH=amd64 GOOS=darwin go build -o build/darwin/feltix
+GOARCH=amd64 GOOS=darwin go build -o build/darwin/wrap
 
 echo "Build finished. Start packaging..."
 

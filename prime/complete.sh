@@ -1,4 +1,4 @@
-# bash completion for feltix                               -*- shell-script -*-
+# bash completion for wrap                                 -*- shell-script -*-
 
 __debug()
 {
@@ -226,9 +226,9 @@ __handle_word()
     __handle_word
 }
 
-_feltix_html()
+_wrap_html()
 {
-    last_command="feltix_html"
+    last_command="wrap_html"
     commands=()
 
     flags=()
@@ -252,9 +252,9 @@ _feltix_html()
     noun_aliases=()
 }
 
-_feltix_pdf()
+_wrap_pdf()
 {
-    last_command="feltix_pdf"
+    last_command="wrap_pdf"
     commands=()
 
     flags=()
@@ -275,9 +275,9 @@ _feltix_pdf()
     noun_aliases=()
 }
 
-_feltix_version()
+_wrap_version()
 {
-    last_command="feltix_version"
+    last_command="wrap_version"
     commands=()
 
     flags=()
@@ -295,9 +295,9 @@ _feltix_version()
     noun_aliases=()
 }
 
-_feltix()
+_wrap()
 {
-    last_command="feltix"
+    last_command="wrap"
     commands=()
     commands+=("html")
     commands+=("pdf")
@@ -318,7 +318,7 @@ _feltix()
     noun_aliases=()
 }
 
-__start_feltix()
+__start_wrap()
 {
     local cur prev words cword
     declare -A flaghash 2>/dev/null || :
@@ -334,7 +334,7 @@ __start_feltix()
     local local_nonpersistent_flags=()
     local flags_with_completion=()
     local flags_completion=()
-    local commands=("feltix")
+    local commands=("wrap")
     local must_have_one_flag=()
     local must_have_one_noun=()
     local last_command
@@ -344,9 +344,9 @@ __start_feltix()
 }
 
 if [[ $(type -t compopt) = "builtin" ]]; then
-    complete -o default -F __start_feltix feltix
+    complete -o default -F __start_wrap wrap
 else
-    complete -o default -o nospace -F __start_feltix feltix
+    complete -o default -o nospace -F __start_wrap wrap
 fi
 
 # ex: ts=4 sw=4 et filetype=sh

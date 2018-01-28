@@ -15,9 +15,9 @@ func handle(err error) {
 	}
 }
 
-func isFeltixFile(pathToFile string) bool {
+func isWrapFile(pathToFile string) bool {
 	extension := strings.ToLower(filepath.Ext(pathToFile))
-	return extension == ".ftx" || extension == ".feltix"
+	return extension == ".wrap"
 }
 
 func printBenchmarks(start, startExport, end time.Time) {

@@ -1,11 +1,11 @@
 ; This is a temporary solution, until WiX support is better on Linux.
 
-!define Name "Feltix"
+!define Name "Wrap"
 Name "${Name}"
 Outfile "../dist/${Name}_Win64.exe"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
-InstallDir "$ProgramFiles64\${Name}"
-!define MUI_ICON "../data/feltix.ico"
+InstallDir "$ProgramFiles64\Wraparound\${Name}"
+!define MUI_ICON "../data/wrap.ico"
 
 !include LogicLib.nsh
 !include MUI.nsh
@@ -22,7 +22,7 @@ ${If} $0 != "admin" ;Require admin rights on NT4+
 ${EndIf}
 
 ${IfNot} ${RunningX64}
-    MessageBox mb_iconstop "This version of Feltix can only be installed on 64bit Windows!"
+    MessageBox mb_iconstop "This version of Wrap can only be installed on 64bit Windows!"
     SetErrorLevel 2
     Quit
 ${EndIf}
@@ -207,10 +207,10 @@ Section
 SetOutPath "$INSTDIR"
 
 WriteUninstaller "$INSTDIR\Uninstall.exe"
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"   "DisplayName" "${Name}"
-WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"   "UninstallString" "$INSTDIR\Uninstall.exe"
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"   "DisplayName" "${Name}"
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"   "UninstallString" "$INSTDIR\Uninstall.exe"
 
-File /oname=feltix.exe ../build/windows/feltix.exe
+File /oname=wrap.exe ../build/windows/wrap.exe
 
 Push $INSTDIR
 Call AddToExecPath
@@ -219,9 +219,9 @@ SectionEnd
 
 Section "uninstall"
 
-Delete "$INSTDIR\feltix.exe"
+Delete "$INSTDIR\wrap.exe"
 
-DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Feltix"
+DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"
 Push $INSTDIR
 Call un.RemoveFromExecPath
 

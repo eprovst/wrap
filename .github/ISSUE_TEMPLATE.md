@@ -9,7 +9,7 @@
 3. [and so on...]
 
 ```
-[Example Fountain/Feltix text]
+[Example Fountain/Wrap text]
 ```
 
 **Expected behavior:** [What you expect to happen]
@@ -18,7 +18,7 @@
 
 ### Versions
 
-You can get this information from `feltix --version`. Also, please include the OS you're running.
+You can get this information from `wrap --version`. Also, please include the OS you're running.
 
 ### Additional Information
 

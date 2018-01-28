@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Feltix/feltixhtml"
-	"github.com/Feltix/feltixparser"
+	"github.com/Wraparound/html"
+	"github.com/Wraparound/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -30,18 +30,18 @@ func init() {
 	htmlCmd.Flags().BoolVarP(&htmlEmbedableFlag, "embedable", "e", false, "only output the play itself")
 	htmlCmd.Flags().BoolVarP(&htmlNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
 
-	FeltixCmd.AddCommand(htmlCmd)
+	WrapCmd.AddCommand(htmlCmd)
 }
 
 func htmlRun(cmd *cobra.Command, args []string) {
 	pathToFile := args[0]
 
-	if isFeltixFile(pathToFile) {
-		feltixparser.UseFeltixExtensions = true
+	if isWrapFile(pathToFile) {
+		parser.UseWrapExtensions = true
 	}
 
 	startTime := time.Now()
-	script, err := feltixparser.ParseFile(pathToFile)
+	script, err := parser.ParseFile(pathToFile)
 	handle(err)
 
 	// Get the filepath to use during export.
@@ -55,15 +55,15 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	startExportTime := time.Now()
 
 	if htmlNoscenenumbersFlag {
-		feltixhtml.AddSceneNumbers = false
+		html.AddSceneNumbers = false
 	}
 
 	if htmlEmbedableFlag {
-		html := feltixhtml.ToHTML(script)
+		html := html.ToHTML(script)
 		err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
 
 	} else {
-		err = feltixhtml.WriteHTMLPage(script, pathToFile)
+		err = html.WriteHTMLPage(script, pathToFile)
 	}
 
 	handle(err)

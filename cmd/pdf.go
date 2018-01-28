@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Feltix/feltixparser"
-	"github.com/Feltix/feltixpdf"
+	"github.com/Wraparound/parser"
+	"github.com/Wraparound/pdf"
 	"github.com/spf13/cobra"
 )
 
@@ -25,18 +25,18 @@ var pdfNoscenenumbersFlag bool
 func init() {
 	pdfCmd.Flags().BoolVarP(&pdfNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
 
-	FeltixCmd.AddCommand(pdfCmd)
+	WrapCmd.AddCommand(pdfCmd)
 }
 
 func pdfRun(cmd *cobra.Command, args []string) {
 	pathToFile := args[0]
 
-	if isFeltixFile(pathToFile) {
-		feltixparser.UseFeltixExtensions = true
+	if isWrapFile(pathToFile) {
+		parser.UseWrapExtensions = true
 	}
 
 	startTime := time.Now()
-	script, err := feltixparser.ParseFile(pathToFile)
+	script, err := parser.ParseFile(pathToFile)
 	handle(err)
 
 	// Get the filepath to use during export.
@@ -51,10 +51,10 @@ func pdfRun(cmd *cobra.Command, args []string) {
 	startExportTime := time.Now()
 
 	if pdfNoscenenumbersFlag {
-		feltixpdf.AddSceneNumbers = false
+		pdf.AddSceneNumbers = false
 	}
 
-	err = feltixpdf.WritePDFFile(script, pathToFile)
+	err = pdf.WritePDFFile(script, pathToFile)
 	handle(err)
 
 	endTime := time.Now()

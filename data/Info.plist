@@ -3,22 +3,22 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleExecutable</key>
-	<string>feltix</string>
+	<string>wrap</string>
 	<key>CFBundleIconFile</key>
-	<string>feltix.icns</string>
+	<string>wrap.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.feltix</string>
+	<string>io.github.wraparound</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>feltix</string>
+	<string>wrap</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>fltx</string>
+	<string>wrap</string>
 	<key>CFBundleVersion</key>
 	<string>0.1.3</string>
 	<key>CFBundleDisplayName</key>
-	<string>Feltix</string>
+	<string>Wrap</string>
 </dict>
 </plist>

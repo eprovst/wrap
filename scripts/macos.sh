@@ -1,15 +1,15 @@
 #! /bin/bash
 
 # This file will be run from the project root
-mkdir -p ./dist/macOS/feltix.app/Contents/MacOS
-mkdir -p ./dist/macOS/feltix.app/Contents/Resources
+mkdir -p ./dist/macOS/wrap.app/Contents/MacOS
+mkdir -p ./dist/macOS/wrap.app/Contents/Resources
 
-cp ./data/Info.plist ./dist/macOS/feltix.app/Contents/Info.plist
-cp ./build/darwin/feltix ./dist/macOS/feltix.app/Contents/MacOS/feltix
-cp ./data/feltix.icns ./dist/macOS/feltix.app/Contents/Resources/feltix.icns
+cp ./data/Info.plist ./dist/macOS/wrap.app/Contents/Info.plist
+cp ./build/darwin/wrap ./dist/macOS/wrap.app/Contents/MacOS/wrap
+cp ./data/wrap.icns ./dist/macOS/wrap.app/Contents/Resources/wrap.icns
 
 cd ./dist/macOS
-zip -q -r ../Feltix_macOS.zip feltix.app
+zip -q -r ../Wrap_macOS.zip wrap.app
 cd ../..
 
 rm -rf ./dist/macOS

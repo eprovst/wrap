@@ -1,7 +1,7 @@
 package main
 
-import "github.com/Feltix/feltix/cmd"
+import "github.com/Wraparound/wrap/cmd"
 
 func main() {
-	cmd.FeltixCmd.GenBashCompletionFile("complete.sh")
+	cmd.WrapCmd.GenBashCompletionFile("complete.sh")
 }
