@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="3in"
+   height="3in"
+   viewBox="0 0 76.200001 76.200003"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="wraparound.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview28"
+     showgrid="false"
+     inkscape:zoom="3.4962963"
+     inkscape:cx="109.52739"
+     inkscape:cy="131.22723"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient1331">
+      <stop
+         style="stop-color:#00c1f2;stop-opacity:1"
+         offset="0"
+         id="stop1327" />
+      <stop
+         style="stop-color:#82ffdc;stop-opacity:1"
+         offset="1"
+         id="stop1329" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient1331"
+       id="linearGradient5832"
+       gradientUnits="userSpaceOnUse"
+       x1="24.379463"
+       y1="224.23956"
+       x2="65.389877"
+       y2="281.31396"
+       gradientTransform="translate(-6.3499995,6.35)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1331"
+       id="linearGradient4170"
+       x1="18.083038"
+       y1="230.11827"
+       x2="59.173649"
+       y2="288.31763"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0.56444449,0.48372415)" />
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-220.79998)">
+    <circle
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke-width:0.2433555"
+       id="path4495"
+       cy="258.89999"
+       cx="38.099998"
+       r="35" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Courier Prime';-inkscape-font-specification:'Courier Prime, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="45.357143"
+       y="252.96576"
+       id="text3717"><tspan
+         id="tspan3719"
+         x="45.357143"
+         y="261.57498" /></text>
+    <path
+       style="fill:url(#linearGradient5832);fill-opacity:1;fill-rule:nonzero;stroke-width:0.26458332"
+       d="M 39.236516,231.33129 A 27.308778,27.59226 2.3606744 0 0 10.81425,257.77513 27.308778,27.59226 2.3606744 0 0 36.963484,286.46867 27.308778,27.59226 2.3606744 0 0 65.38575,260.02483 27.308778,27.59226 2.3606744 0 0 39.236516,231.33129 Z m 0.772265,3.28503 A 24.379463,25.324403 2.3606744 0 1 63.324885,260.92359 24.379463,25.324403 2.3606744 0 1 37.922571,285.22193 24.379463,25.324403 2.3606744 0 1 14.606968,258.9152 24.379463,25.324403 2.3606744 0 1 40.008781,234.61632 Z"
+       id="path3682" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.0555563px;line-height:125%;font-family:'Courier Prime Sans';-inkscape-font-specification:'Courier Prime Sans, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient4170);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="18.093779"
+       y="261.7373"
+       id="text3356"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3358"
+         x="18.093779"
+         y="261.7373"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.0555563px;line-height:125%;font-family:'Courier Prime Sans';-inkscape-font-specification:'Courier Prime Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient4170);fill-opacity:1;fill-rule:nonzero">Wraparound</tspan></text>
+  </g>
+</svg>

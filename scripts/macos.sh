@@ -6,7 +6,7 @@ mkdir -p ./dist/macOS/wrap.app/Contents/Resources
 
 cp ./data/Info.plist ./dist/macOS/wrap.app/Contents/Info.plist
 cp ./build/darwin/wrap ./dist/macOS/wrap.app/Contents/MacOS/wrap
-cp ./data/wrap.icns ./dist/macOS/wrap.app/Contents/Resources/wrap.icns
+cp ./assets/wrap.icns ./dist/macOS/wrap.app/Contents/Resources/wrap.icns
 
 cd ./dist/macOS
 zip -q -r ../Wrap_macOS.zip wrap.app

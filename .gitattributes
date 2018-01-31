@@ -1,2 +1,2 @@
-data/* linguist-vendored
-prime/* linguist-vendored
+data/* linguist-vendored=true
+prime/* linguist-generated=true

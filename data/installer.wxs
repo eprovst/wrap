@@ -17,7 +17,7 @@
 
     <Media Id='1' Cabinet='wrap.cab' EmbedCab='yes' />
 
-    <Icon Id="wrap.ico" SourceFile="data/wrap.ico" />
+    <Icon Id="wrap.ico" SourceFile="assets/wrap.ico" />
     <Property Id="ARPPRODUCTICON" Value="wrap.ico" />
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
