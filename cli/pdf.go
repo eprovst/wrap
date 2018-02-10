@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Wraparound/parser"
-	"github.com/Wraparound/pdf"
+	"github.com/Wraparound/wrap/parser"
+	"github.com/Wraparound/wrap/pdf"
 	"github.com/spf13/cobra"
 )
 
