@@ -9,7 +9,7 @@
 
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
   <Product Name='Wrap' Id='655075A2-2D07-4B45-92FC-D03EABA6BACE' UpgradeCode='734EAF27-1939-4ACE-A716-C71462D42798'
-    Language='1033' Codepage='1252' Version='0.1.3' Manufacturer='The Wraparound Contributers'> <!-- Platform="x64" should be added -->
+    Language='1033' Codepage='1252' Version='0.1.4' Manufacturer='The Wraparound Contributers'> <!-- Platform="x64" should be added -->
 
     <Package Id='*' Keywords='Installer' Description="Wrap Installer"
       Manufacturer='The Wraparound Contributers' InstallerVersion='300' Languages='1033'

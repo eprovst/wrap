@@ -1,5 +1,5 @@
 name: wrap
-version: "v0.1.3"
+version: "v0.1.4"
 summary: A Fountain export tool with some extra's...
 description: Wrap is a parser/exporter for the Fountain format which also adds some extensions to said format.
 grade: stable
@@ -17,4 +17,6 @@ apps:
 parts:
   wrap-cli:
     plugin: go
+    go-importpath: github.com/Wraparound/wrap
     go-packages: [github.com/Wraparound/wrap]
+    go-buildtags: [ldflags '-s -w']
