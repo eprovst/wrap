@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	// TODO: Once the GUI is complete add the check for the --gui flag.
+
 	// Run the root command
 	if err := cli.WrapCmd.Execute(); err != nil {
 		fmt.Println(err)
