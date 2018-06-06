@@ -29,6 +29,8 @@
               <File Id='WrapEXE' Name='wrap.exe' DiskId='1' Source='build/windows/wrap.exe' KeyPath='yes'/>
             </Component>
 
+            <!-- TODO: Add file type icons when moving to WiX -->
+
             <!-- <Component Id="SetPath" Guid='85C8F74A-439D-4B36-913A-E0BD75781B81'>
               <Environment Id="Path" Name="PATH" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="yes" />
             </Component> -->

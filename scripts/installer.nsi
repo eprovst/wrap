@@ -210,6 +210,18 @@ WriteUninstaller "$INSTDIR\Uninstall.exe"
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"   "DisplayName" "${Name}"
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"   "UninstallString" "$INSTDIR\Uninstall.exe"
 
+; File types and their icons
+WriteRegStr HKCR ".fountain" "" "Wrap.Fountain"
+WriteRegStr HKCR "Wrap.Fountain" "" "Fountain"
+WriteRegStr HKCR "Wrap.Fountain\DefaultIcon" "" "$INSTDIR\fountain.ico"
+File /oname=fountain.ico ../assets/filetypes/fountain/fountain.ico
+
+WriteRegStr HKCR ".wrap" "" "Wrap.Wrap"
+WriteRegStr HKCR "Wrap.Wrap" "" "Wrap"
+WriteRegStr HKCR "Wrap.Wrap\DefaultIcon" "" "$INSTDIR\wrap.ico"
+File /oname=wrap.ico ../assets/filetypes/wrap/wrap.ico
+
+; Executable
 File /oname=wrap.exe ../build/windows/wrap.exe
 
 Push $INSTDIR
@@ -219,7 +231,17 @@ SectionEnd
 
 Section "uninstall"
 
+; Executable
 Delete "$INSTDIR\wrap.exe"
+
+; File type icons
+DeleteRegKey HKCR ".fountain"
+DeleteRegKey HKCR "Wrap.Fountain"
+Delete "$INSTDIR\fountain.ico"
+
+DeleteRegKey HKCR ".wrap"
+DeleteRegKey HKCR "Wrap.Wrap"
+Delete "$INSTDIR\wrap.ico"
 
 DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Wrap"
 Push $INSTDIR
