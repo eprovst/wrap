@@ -114,6 +114,12 @@ __wrap_handle_reply()
     if declare -F __ltrim_colon_completions >/dev/null; then
         __ltrim_colon_completions "$cur"
     fi
+
+    # If there is only 1 completion and it is a flag with an = it will be completed
+    # but we don't want a space after the =
+    if [[ "${#COMPREPLY[@]}" -eq "1" ]] && [[ $(type -t compopt) = "builtin" ]] && [[ "${COMPREPLY[0]}" == --*= ]]; then
+       compopt -o nospace
+    fi
 }
 
 # The arguments should be in the form "ext1|ext2|extn"
@@ -200,7 +206,7 @@ __wrap_handle_command()
         next_command="_${last_command}_${words[c]//:/__}"
     else
         if [[ $c -eq 0 ]]; then
-            next_command="_$(basename "${words[c]//:/__}")"
+            next_command="_wrap_root_command"
         else
             next_command="_${words[c]//:/__}"
         fi
@@ -221,8 +227,16 @@ __wrap_handle_word()
         __wrap_handle_flag
     elif __wrap_contains_word "${words[c]}" "${commands[@]}"; then
         __wrap_handle_command
-    elif [[ $c -eq 0 ]] && __wrap_contains_word "$(basename "${words[c]}")" "${commands[@]}"; then
+    elif [[ $c -eq 0 ]]; then
         __wrap_handle_command
+    elif __wrap_contains_word "${words[c]}" "${command_aliases[@]}"; then
+        # aliashash variable is an associative array which is only supported in bash > 3.
+        if [[ -z "${BASH_VERSION}" || "${BASH_VERSINFO[0]}" -gt 3 ]]; then
+            words[c]=${aliashash[${words[c]}]}
+            __wrap_handle_command
+        else
+            __wrap_handle_noun
+        fi
     else
         __wrap_handle_noun
     fi
@@ -232,6 +246,9 @@ __wrap_handle_word()
 _wrap_html()
 {
     last_command="wrap_html"
+
+    command_aliases=()
+
     commands=()
 
     flags=()
@@ -258,6 +275,9 @@ _wrap_html()
 _wrap_pdf()
 {
     last_command="wrap_pdf"
+
+    command_aliases=()
+
     commands=()
 
     flags=()
@@ -281,6 +301,9 @@ _wrap_pdf()
 _wrap_version()
 {
     last_command="wrap_version"
+
+    command_aliases=()
+
     commands=()
 
     flags=()
@@ -298,9 +321,12 @@ _wrap_version()
     noun_aliases=()
 }
 
-_wrap()
+_wrap_root_command()
 {
     last_command="wrap"
+
+    command_aliases=()
+
     commands=()
     commands+=("html")
     commands+=("pdf")
@@ -325,6 +351,7 @@ __start_wrap()
 {
     local cur prev words cword
     declare -A flaghash 2>/dev/null || :
+    declare -A aliashash 2>/dev/null || :
     if declare -F _init_completion >/dev/null 2>&1; then
         _init_completion -s || return
     else
