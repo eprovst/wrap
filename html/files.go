@@ -1,14 +1,35 @@
 package html
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/Wraparound/wrap/ast"
 )
 
-// WriteHTMLPage writes the output of HTMLPage()
-func WriteHTMLPage(script *ast.Script, pathToFile string) error {
+// MakeHTML writes the output of WriteHTML()
+func MakeHTML(script *ast.Script, pathToFile string) error {
+	// Open output file
+	out, err := os.Create(pathToFile)
+
+	if err != nil {
+		return err
+	}
+
 	// First convert file
-	html := ToHTMLPage(script)
-	return ioutil.WriteFile(pathToFile, []byte(html), 0644)
+	WriteHTML(script, out)
+	return out.Close()
+}
+
+// MakeHTMLPage writes the output of WriteHTMLPage()
+func MakeHTMLPage(script *ast.Script, pathToFile string) error {
+	// Open output file
+	out, err := os.Create(pathToFile)
+
+	if err != nil {
+		return err
+	}
+
+	// First convert file
+	WriteHTMLPage(script, out)
+	return out.Close()
 }

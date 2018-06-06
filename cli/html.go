@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"time"
@@ -59,11 +58,10 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	}
 
 	if htmlEmbedableFlag {
-		html := html.ToHTML(script)
-		err = ioutil.WriteFile(pathToFile, []byte(html), 0664)
+		err = html.MakeHTML(script, pathToFile)
 
 	} else {
-		err = html.WriteHTMLPage(script, pathToFile)
+		err = html.MakeHTMLPage(script, pathToFile)
 	}
 
 	handle(err)

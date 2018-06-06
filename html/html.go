@@ -1,7 +1,7 @@
 package html
 
 import (
-	"bytes"
+	"io"
 	"strings"
 
 	"github.com/Wraparound/wrap/ast"
@@ -18,169 +18,168 @@ var styles = map[string]string{
 	"stageplay":  "stage",
 }
 
-// ToHTML returns the script in html format.
-func ToHTML(script *ast.Script) string {
+// WriteHTML writes a script in HTML format to a *io.Writer
+func WriteHTML(script *ast.Script, writer io.Writer) {
 	styleFile := styles[strings.ToLower(script.TitlePage["type"])]
 
 	if styleFile == "" {
 		styleFile = "screen"
 	}
 
-	htm := bytes.NewBufferString(`<div class="` + styleFile + ` play">` + "\n")
+	writeText(`<div class="`+styleFile+` play">`+"\n", writer)
+	indent++
 
 	for _, element := range script.Elements {
-		switch element.(type) {
+		switch element := element.(type) {
 		case ast.Action:
-			elem := string(element.(ast.Action))
-			htm.WriteString(`  <div class="action">` + string(elem) + "</div>\n")
+			writeText(`<div class="action">`+string(element)+"</div>\n", writer)
 
 		case ast.CenteredText:
-			elem := string(element.(ast.CenteredText))
-			htm.WriteString(`  <div class="action centered">` + string(elem) + "</div>\n")
+			writeText(`<div class="action centered">`+string(element)+"</div>\n", writer)
 
 		case ast.Dialogue:
-			htm.WriteString(`  <div class="dialog">` + "\n")
-			element := element.(ast.Dialogue)
-			character := string(element.Character)
-			htm.WriteString(`    <p class="character">` + character + "</p>\n")
+			writeString(`<div class="dialog">`+"\n", writer)
+			indent++
+
+			writeText(`<p class="character">`+element.Character+"</p>\n", writer)
 
 			for _, elem := range element.Lines {
-				switch elem.(type) {
+				switch elem := elem.(type) {
 				case ast.Speech:
-					el := string(elem.(ast.Speech))
-					htm.WriteString(`    <p>` + string(el) + "</p>\n")
+					writeText(`<p>`+string(elem)+"</p>\n", writer)
 
 				case ast.Parenthetical:
-					el := string(elem.(ast.Parenthetical))
-					htm.WriteString(`    <p class="parenthetical">` + string(el) + "</p>\n")
+					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
 
 				case ast.Lyrics:
-					el := string(elem.(ast.Lyrics))
-					htm.WriteString(`    <p class="lyrics">` + string(el) + "</p>\n")
+					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
 				}
 			}
-			htm.WriteString("  </div>\n")
+
+			indent--
+			writeString("</div>\n", writer)
 
 		case ast.DualDialogue:
-			htm.WriteString(`  <div class="dual">` + "\n")
-			element := element.(ast.DualDialogue)
-
-			htm.WriteString(`    <div class="left">` + "\n")
-			character := string(element.LCharacter)
-			htm.WriteString(`      <p class="character">` + character + "</p>\n")
+			writeString(`<div class="dual">`+"\n", writer)
+			indent++
+			writeString(`<div class="left">`+"\n", writer)
+			indent++
+			writeText(`<p class="character">`+element.LCharacter+"</p>\n", writer)
 
 			for _, elem := range element.LLines {
-				switch elem.(type) {
+				switch elem := elem.(type) {
 				case ast.Speech:
-					el := string(elem.(ast.Speech))
-					htm.WriteString(`      <p>` + string(el) + "</p>\n")
+					writeText(`<p>`+string(elem)+"</p>\n", writer)
 
 				case ast.Parenthetical:
-					el := string(elem.(ast.Parenthetical))
-					htm.WriteString(`      <p class="parenthetical">` + string(el) + "</p>\n")
+					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
 
 				case ast.Lyrics:
-					el := string(elem.(ast.Lyrics))
-					htm.WriteString(`      <p class="lyrics">` + string(el) + "</p>\n")
+					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
 				}
 			}
-			htm.WriteString("    </div>\n")
 
-			htm.WriteString(`    <div class="right">` + "\n")
-			character = string(element.RCharacter)
-			htm.WriteString(`      <p class="character">` + character + "</p>\n")
+			indent--
+			writeString("</div>\n", writer)
+
+			writeString(`<div class="right">`+"\n", writer)
+			indent++
+			writeText(`<p class="character">`+element.RCharacter+"</p>\n", writer)
 
 			for _, elem := range element.RLines {
-				switch elem.(type) {
+				switch elem := elem.(type) {
 				case ast.Speech:
-					el := string(elem.(ast.Speech))
-					htm.WriteString(`      <p>` + string(el) + "</p>\n")
+					writeText(`<p>`+string(elem)+"</p>\n", writer)
 
 				case ast.Parenthetical:
-					el := string(elem.(ast.Parenthetical))
-					htm.WriteString(`      <p class="parenthetical">` + string(el) + "</p>\n")
+					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
 
 				case ast.Lyrics:
-					el := string(elem.(ast.Lyrics))
-					htm.WriteString(`      <p class="lyrics">` + string(el) + "</p>\n")
+					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
 				}
 			}
-			htm.WriteString("    </div>\n  </div>\n")
+
+			indent--
+			writeString("</div>\n", writer)
+			indent--
+			writeString("</div>\n", writer)
 
 		case ast.Lyrics:
-			elem := string(element.(ast.Lyrics))
-			htm.WriteString(`  <div class="lyrics">` + string(elem) + "</div>\n")
+			writeText(`<div class="lyrics">`+string(element)+"</div>\n", writer)
 
 		case ast.PageBreak:
-			htm.WriteString(`  <div class="page-break"></div>` + "\n")
+			writeString(`<div class="page-break"></div>`+"\n", writer)
 
 		case ast.Scene:
-			elem := element.(ast.Scene)
-			htm.WriteString(`  <div class="slug">`)
+			writeString(`<div class="slug">`+"\n", writer)
+			indent++
 
 			if AddSceneNumbers {
-				htm.WriteString(`<span class="scnuml">` + elem.SceneNumber + "</span>")
+				writeString(`<span class="scnuml">`+element.SceneNumber+"</span>\n", writer)
 			}
 
-			htm.WriteString(elem.Slugline)
+			writeText(element.Slugline+"\n", writer)
 
 			if AddSceneNumbers {
-				htm.WriteString(`<span class="scnumr">` + elem.SceneNumber + "</span>")
+				writeString(`<span class="scnumr">`+element.SceneNumber+"</span>\n", writer)
 			}
 
-			htm.WriteString("</div>\n")
+			indent--
+			writeString("</div>\n", writer)
 
 		case ast.Transition:
-			elem := string(element.(ast.Transition))
-			htm.WriteString(`  <div class="transition">` + string(elem) + "</div>\n")
+			writeText(`<div class="transition">`+string(element)+"</div>\n", writer)
 
 		case ast.BeginAct:
 			// Acts start on a new page
-			htm.WriteString(`  <div class="page-break"></div>` + "\n")
-
-			elem := string(element.(ast.BeginAct))
-			htm.WriteString(`  <div class="act">` + string(elem) + "</div>\n")
+			writeString(`<div class="page-break"></div>`+"\n", writer)
+			writeText(`<div class="act">`+string(element)+"</div>\n", writer)
 
 		case ast.EndAct:
-			elem := string(element.(ast.EndAct))
-			htm.WriteString(`  <div class="act">` + string(elem) + "</div>\n")
+			writeText(`<div class="act">`+string(element)+"</div>\n", writer)
 		}
 	}
 
-	htm.WriteString("</div>\n")
-	return htm.String()
+	indent--
+	writeString("</div>\n", writer)
 }
 
-// ToHTMLPage returns the script as html page.
-func ToHTMLPage(script *ast.Script) string {
+// WriteHTMLPage writes the script as html page to a *io.Writer.
+func WriteHTMLPage(script *ast.Script, writer io.Writer) {
 	styleFile := styles[strings.ToLower(script.TitlePage["type"])]
 	if styleFile == "" {
 		styleFile = "screen"
 	}
 
-	htm := bytes.NewBufferString("<!DOCTYPE html>\n")
-	htm.WriteString("<html>\n")
-	htm.WriteString("  <head>\n")
-	htm.WriteString(`    <meta charset="utf-8">` + "\n")
-	htm.WriteString("    <title>" + strings.TrimSpace(removeHTMLTags(script.TitlePage["title"])) + "</title>\n")
+	writeString("<!DOCTYPE html>\n", writer)
+	writeString("<html>\n", writer)
+	indent++
+
+	writeString("<head>\n", writer)
+	indent++
+	writeString(`<meta charset="utf-8">`+"\n", writer)
+	writeString("<title>"+strings.TrimSpace(removeHTMLTags(script.TitlePage["title"]))+"</title>\n", writer)
 
 	for name, content := range script.TitlePage {
 		if name != "title" { // Already written.
 			content = strings.Replace(content, "<br>\n", "\n", -1)
-			htm.WriteString(`    <meta name="` + name + `" content="` + strings.TrimSpace(content) + "\">\n")
+			writeText(`<meta name="`+name+`" content="`+strings.TrimSpace(content)+"\">\n", writer)
 		}
 	}
 
-	htm.WriteString(`    <link rel="stylesheet" type="text/css" href="` + URLToCSS + styleFile + `.min.css">` + "\n")
-	htm.WriteString(`    <link rel="stylesheet" type="text/css" href="` + URLToCSS + `play.min.css">` + "\n")
-	htm.WriteString(`    <link rel="stylesheet" type="text/css" href="` + URLToCSS + `page.min.css">` + "\n")
+	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+styleFile+`.min.css">`+"\n", writer)
+	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+`play.min.css">`+"\n", writer)
+	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+`page.min.css">`+"\n", writer)
 
-	htm.WriteString("  </head>\n")
-	htm.WriteString("  <body>\n")
+	indent--
+	writeString("</head>\n", writer)
 
-	htm.WriteString(ToHTML(script))
+	writeString("<body>\n", writer)
+	indent++
+	WriteHTML(script, writer)
+	indent--
+	writeString("</body>\n", writer)
 
-	htm.WriteString("  </body>\n")
-	htm.WriteString("</html>\n")
-	return htm.String()
+	indent--
+	writeString("</html>\n", writer)
 }

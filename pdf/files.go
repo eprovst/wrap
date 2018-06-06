@@ -21,5 +21,5 @@ func WritePDFFile(script *ast.Script, pathToFile string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(pathToFile, filecontents, 0644)
+	return ioutil.WriteFile(pathToFile, filecontents, 0666)
 }
