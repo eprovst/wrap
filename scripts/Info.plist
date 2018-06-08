@@ -34,7 +34,7 @@
 				<string>fountain</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>FOUNTAIN</string>
+			<string>FOUNTAIN.icns</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
@@ -46,7 +46,7 @@
 				<string>wrap</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>WRAP</string>
+			<string>WRAP.icns</string>
 		</dict>
 </array>
 </dict>

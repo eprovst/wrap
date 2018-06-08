@@ -1,6 +1,7 @@
 package html
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/Wraparound/wrap/ast"
@@ -15,9 +16,11 @@ func MakeHTML(script *ast.Script, pathToFile string) error {
 		return err
 	}
 
-	// First convert file
-	WriteHTML(script, out)
-	return out.Close()
+	defer out.Close()
+
+	buffer := bufio.NewWriter(out)
+	WriteHTML(script, buffer)
+	return buffer.Flush()
 }
 
 // MakeHTMLPage writes the output of WriteHTMLPage()
@@ -29,7 +32,9 @@ func MakeHTMLPage(script *ast.Script, pathToFile string) error {
 		return err
 	}
 
-	// First convert file
-	WriteHTMLPage(script, out)
-	return out.Close()
+	defer out.Close()
+
+	buffer := bufio.NewWriter(out)
+	WriteHTMLPage(script, buffer)
+	return buffer.Flush()
 }
