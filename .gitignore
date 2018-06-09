@@ -16,5 +16,11 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# Wrap/Fountain files and output
+*.fountain
+*.wrap
+*.pdf
+*.html
+
 # Editor
 .vscode/
