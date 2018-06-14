@@ -37,7 +37,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 	var err error
 
 	// Create a map to contain the titlepage.
-	titlp := make(map[string]string)
+	titlp := make(map[string][]ast.Line)
 
 	// Read the first line.
 	if scanner.Scan() {
@@ -142,7 +142,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 
 	// All metadata is collected, now set the used language.
 	if UseWrapExtensions {
-		language = languages.GetLanguage(titlp["language"])
+		language = languages.GetLanguage(titlp["language"][0].String())
 
 	} else {
 		/* If we're not using the Wrap extensions the language
@@ -320,8 +320,8 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				switch lines[i].Category {
 				case other:
 					if isParenthetical(lines[i].Line) {
-						line = textHandler([]string{strings.TrimSpace(lines[i].Line)})
-						dialog = append(dialog, ast.Parenthetical(line))
+						lines := textHandler([]string{strings.TrimSpace(lines[i].Line)})
+						dialog = append(dialog, ast.Parenthetical(lines))
 
 					} else {
 						contents := []string{strings.TrimSpace(lines[i].Line)}
@@ -362,7 +362,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				elems[len(elems)-1] = ast.DualDialogue{
 					LCharacter: lastDia.Character,
 					LLines:     lastDia.Lines,
-					RCharacter: charact,
+					RCharacter: textHandler([]string{charact}),
 					RLines:     dialog,
 				}
 
@@ -371,7 +371,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 
 			} else {
 				elems = append(elems, ast.Dialogue{
-					Character: charact,
+					Character: textHandler([]string{charact}),
 					Lines:     dialog,
 				})
 			}
