@@ -491,7 +491,12 @@ func textHandler(lines []string) []ast.Line {
 			currentLine = append(currentLine, currentCell)
 		}
 
+		currentCell = ast.Cell{
+			Comment: nowComment,
+		}
+
 		endResult = append(endResult, currentLine)
+		currentLine = ast.Line{}
 	}
 
 	// We have one unwanted newline at the end so remove that.

@@ -44,11 +44,11 @@ func cellify(text []ast.Line, style lineType) []styledLine {
 		lines = append(lines, wordwrap(styledline)...)
 	}
 
-	/*// If the last break was only a break, then...
-	if lines[len(lines)-1].isEmpty() {
+	// If the last break was only a break, then...
+	if len(lines) > 0 && lines[len(lines)-1].isEmpty() {
 		// ...remove the last line.
 		lines = lines[:len(lines)-1]
-	}*/
+	}
 
 	// Lable the first line as first of section
 	if len(lines) > 0 {
