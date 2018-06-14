@@ -6,7 +6,7 @@ import (
 	"github.com/Wraparound/wrap/ast"
 )
 
-func addLines(lines []aLine) {
+func addLines(lines []styledLine) {
 	// Add each line individualy
 	for _, line := range lines {
 		if !(thisPDF.GetY() == topMargin && line.isEmpty()) {
@@ -16,7 +16,7 @@ func addLines(lines []aLine) {
 	}
 }
 
-func addLine(line aLine) {
+func addLine(line styledLine) {
 	addedLeading := line.leading()
 
 	// Line doesn't fit on page:
@@ -48,14 +48,14 @@ func newPage() {
 func addTitlePage(script *ast.Script) {
 	// First get the author(s)
 	authors := script.TitlePage["authors"]
-	if authors == "" {
+	if len(authors) == 0 || authors[0].Lenght() == 0 {
 		authors = script.TitlePage["author"]
 	}
 
 	// Now start building the titlepage itself
 	thisPDF.AddPage()
 
-	topPart := []aLine{}
+	topPart := []styledLine{}
 	topPart = append(topPart, cellify(script.TitlePage["title"], titlePageTitle)...)
 	topPart = append(topPart, cellify(script.TitlePage["credit"], titlePageCredit)...)
 	topPart = append(topPart, cellify(authors, titlePageAuthor)...)
@@ -65,7 +65,7 @@ func addTitlePage(script *ast.Script) {
 	addLines(topPart)
 
 	// Build the lower half of the page
-	lowerPart := []aLine{}
+	lowerPart := []styledLine{}
 	lowerPart = append(lowerPart, cellify(script.TitlePage["draft date"], titlePageRight)...)
 	lowerPart = append(lowerPart, cellify(script.TitlePage["notes"], titlePageRight)...)
 	lowerPart = append(lowerPart, cellify(script.TitlePage["contact"], titlePageRight)...)

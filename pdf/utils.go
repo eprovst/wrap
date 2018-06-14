@@ -4,7 +4,7 @@ import (
 	"unicode"
 )
 
-func getHeight(lines []aLine) int {
+func getHeight(lines []styledLine) int {
 	height := 0
 	for _, line := range lines {
 		height += line.leading() + 1

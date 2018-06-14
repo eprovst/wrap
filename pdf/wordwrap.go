@@ -2,10 +2,12 @@ package pdf
 
 import (
 	"unicode"
+
+	"github.com/Wraparound/wrap/ast"
 )
 
 // Breaks line into lines of correct lenght.
-func wordwrap(line aLine) []aLine {
+func wordwrap(line styledLine) []styledLine {
 	lineLenght := currentTheme[line.Type].LineLenght
 
 	// If the line lenght is undefined, change it to a default.
@@ -14,12 +16,12 @@ func wordwrap(line aLine) []aLine {
 	}
 
 	currentLineLenght := 0
-	currentLineContent := []aCell{}
-	lines := []aLine{}
+	currentLineContent := []ast.Cell{}
+	lines := []styledLine{}
 
 	for currentCell := 0; currentCell < len(line.Content); currentCell++ {
 		cell := line.Content[currentCell]
-		currentLineLenght += cell.len()
+		currentLineLenght += cell.Lenght()
 
 		if currentLineLenght <= lineLenght {
 			currentLineContent = append(currentLineContent, cell)
@@ -70,14 +72,14 @@ func wordwrap(line aLine) []aLine {
 			// Add the first half to the current line and that line to the final list
 			currentLineContent = append(currentLineContent, firstHalfOfCell)
 
-			lines = append(lines, aLine{
+			lines = append(lines, styledLine{
 				Content: currentLineContent,
 				Type:    line.Type,
 			})
 
 			// Prepare next line aggregation
 			currentLineLenght = 0
-			currentLineContent = []aCell{}
+			currentLineContent = []ast.Cell{}
 
 			// Place the second half at the current position so it is reexamined, if not empty
 			if secondHalfOfCell.Content != "" {
@@ -88,7 +90,7 @@ func wordwrap(line aLine) []aLine {
 	}
 
 	// Add last line:
-	lines = append(lines, aLine{
+	lines = append(lines, styledLine{
 		Content: currentLineContent,
 		Type:    line.Type,
 	})
