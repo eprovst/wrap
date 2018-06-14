@@ -18,7 +18,7 @@ parts:
   wrap-cli:
     plugin: go
     build-packages:
-      - golang-1.10
+      - golang-1.10-go
     go-importpath: github.com/Wraparound/wrap
     go-packages: [github.com/Wraparound/wrap]
     go-buildtags: [ldflags '-s -w']
