@@ -1,6 +1,7 @@
 package html
 
 import (
+	"html"
 	"io"
 	"strings"
 
@@ -20,7 +21,11 @@ var styles = map[string]string{
 
 // WriteHTML writes a script in HTML format to a *io.Writer
 func WriteHTML(script *ast.Script, writer io.Writer) {
-	styleFile := styles[strings.ToLower(script.TitlePage["type"])]
+	richStyle := script.TitlePage["type"]
+	var styleFile string
+	if len(richStyle) != 0 {
+		styleFile = styles[strings.ToLower(richStyle[0].String())]
+	}
 
 	if styleFile == "" {
 		styleFile = "screen"
@@ -32,27 +37,51 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 	for _, element := range script.Elements {
 		switch element := element.(type) {
 		case ast.Action:
-			writeText(`<div class="action">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="action">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 
 		case ast.CenteredText:
-			writeText(`<div class="action centered">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="action centered">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 
 		case ast.Dialogue:
 			writeString(`<div class="dialog">`+"\n", writer)
 			indent++
 
-			writeText(`<p class="character">`+element.Character+"</p>\n", writer)
+			writeText(`<p class="character">`+"\n", writer)
+			indent++
+			writeLines(element.Character, writer)
+			indent--
+			writeText("</p>\n", writer)
 
 			for _, elem := range element.Lines {
 				switch elem := elem.(type) {
 				case ast.Speech:
-					writeText(`<p>`+string(elem)+"</p>\n", writer)
+					writeText("<p>\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Parenthetical:
-					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="parenthetical">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Lyrics:
-					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="lyrics">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 				}
 			}
 
@@ -64,18 +93,34 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 			indent++
 			writeString(`<div class="left">`+"\n", writer)
 			indent++
-			writeText(`<p class="character">`+element.LCharacter+"</p>\n", writer)
+			writeText(`<p class="character">`+"\n", writer)
+			indent++
+			writeLines(element.LCharacter, writer)
+			indent--
+			writeText("</p>\n", writer)
 
 			for _, elem := range element.LLines {
 				switch elem := elem.(type) {
 				case ast.Speech:
-					writeText(`<p>`+string(elem)+"</p>\n", writer)
+					writeText(`<p>`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Parenthetical:
-					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="parenthetical">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Lyrics:
-					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="lyrics">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 				}
 			}
 
@@ -84,18 +129,34 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 
 			writeString(`<div class="right">`+"\n", writer)
 			indent++
-			writeText(`<p class="character">`+element.RCharacter+"</p>\n", writer)
+			writeText(`<p class="character">`+"\n", writer)
+			indent++
+			writeLines(element.RCharacter, writer)
+			indent--
+			writeText("</p>\n", writer)
 
 			for _, elem := range element.RLines {
 				switch elem := elem.(type) {
 				case ast.Speech:
-					writeText(`<p>`+string(elem)+"</p>\n", writer)
+					writeText("<p>\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Parenthetical:
-					writeText(`<p class="parenthetical">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="parenthetical">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 
 				case ast.Lyrics:
-					writeText(`<p class="lyrics">`+string(elem)+"</p>\n", writer)
+					writeText(`<p class="lyrics">`+"\n", writer)
+					indent++
+					writeLines(elem, writer)
+					indent--
+					writeText("</p>\n", writer)
 				}
 			}
 
@@ -105,7 +166,11 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 			writeString("</div>\n", writer)
 
 		case ast.Lyrics:
-			writeText(`<div class="lyrics">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="lyrics">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 
 		case ast.PageBreak:
 			writeString(`<div class="page-break"></div>`+"\n", writer)
@@ -118,7 +183,7 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 				writeString(`<span class="scnuml">`+element.SceneNumber+"</span>\n", writer)
 			}
 
-			writeText(element.Slugline+"\n", writer)
+			writeLines(element.Slugline, writer)
 
 			if AddSceneNumbers {
 				writeString(`<span class="scnumr">`+element.SceneNumber+"</span>\n", writer)
@@ -128,15 +193,27 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 			writeString("</div>\n", writer)
 
 		case ast.Transition:
-			writeText(`<div class="transition">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="transition">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 
 		case ast.BeginAct:
 			// Acts start on a new page
 			writeString(`<div class="page-break"></div>`+"\n", writer)
-			writeText(`<div class="act">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="act">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 
 		case ast.EndAct:
-			writeText(`<div class="act">`+string(element)+"</div>\n", writer)
+			writeText(`<div class="act">`+"\n", writer)
+			indent++
+			writeLines(element, writer)
+			indent--
+			writeText("</div>\n", writer)
 		}
 	}
 
@@ -146,7 +223,12 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 
 // WriteHTMLPage writes the script as html page to a *io.Writer.
 func WriteHTMLPage(script *ast.Script, writer io.Writer) {
-	styleFile := styles[strings.ToLower(script.TitlePage["type"])]
+	richStyle := script.TitlePage["type"]
+	var styleFile string
+	if len(richStyle) != 0 {
+		styleFile = styles[strings.ToLower(richStyle[0].String())]
+	}
+
 	if styleFile == "" {
 		styleFile = "screen"
 	}
@@ -158,11 +240,11 @@ func WriteHTMLPage(script *ast.Script, writer io.Writer) {
 	writeString("<head>\n", writer)
 	indent++
 	writeString(`<meta charset="utf-8">`+"\n", writer)
-	writeString("<title>"+strings.TrimSpace(removeHTMLTags(script.TitlePage["title"]))+"</title>\n", writer)
+	writeString("<title>"+strings.TrimSpace(ast.LinesToString(script.TitlePage["title"]))+"</title>\n", writer)
 
-	for name, content := range script.TitlePage {
+	for name, richcontent := range script.TitlePage {
 		if name != "title" { // Already written.
-			content = strings.Replace(content, "<br>\n", "\n", -1)
+			content := html.EscapeString(ast.LinesToString(richcontent))
 			writeText(`<meta name="`+name+`" content="`+strings.TrimSpace(content)+"\">\n", writer)
 		}
 	}
