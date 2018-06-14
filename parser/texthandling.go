@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"bytes"
-	"html"
 	"strings"
+
+	"github.com/Wraparound/wrap/ast"
 )
 
 type ipKind byte
@@ -37,8 +37,10 @@ type insertionPoint struct {
  - Escaping always works.
 */
 
-func textHandler(lines []string) string {
-	endresult := bytes.NewBuffer([]byte{})
+func textHandler(lines []string) []ast.Line {
+	endResult := []ast.Line{}
+	currentLine := ast.Line{}
+	currentCell := ast.Cell{}
 
 	// Keep note if we're in a comment or not.
 	nowComment := false
@@ -49,23 +51,21 @@ func textHandler(lines []string) string {
 			if nowComment {
 				// If there are less than two spaces on an empty line -> end comment.
 				nowComment = false
-				endresult.WriteString("</ins>")
+
+				if !currentCell.Empty() {
+					currentLine = append(currentLine, currentCell)
+				}
 			}
 
-			endresult.WriteString("<br>\n")
+			endResult = append(endResult, currentLine)
+			currentLine = ast.Line{}
 			continue // Line is done.
 		}
 
 		var insertPs []insertionPoint
-		line = html.EscapeString(line)
 
 		// Replace tab by four spaces
 		line = strings.Replace(line, "\t", strings.Repeat(" ", 4), -1)
-
-		// Save multiple spaces.
-		line = strings.Replace(line, "  ", "&nbsp; ", -1)
-		line = strings.Replace(line, " &nbsp;", "&nbsp;&nbsp;", -1)
-		line = strings.Replace(line, "  ", "&nbsp; ", -1)
 
 		// Search for insert points.
 		for i := 0; i < len(line); i++ {
@@ -409,84 +409,91 @@ func textHandler(lines []string) string {
 		// Shifting isn't an issue, as we don't change the read string.
 		lastWritePoint := 0
 
+		currentlyBold := false
+		currentlyItalic := false
+		currentlyUnderline := false
+
 		for _, insPoint := range insertPs {
 			if insPoint.Escaped {
 				// Add everything appart from the (first) backslash.
-				endresult.WriteString(line[lastWritePoint : insPoint.Point-1])
+				currentCell.Content += line[lastWritePoint : insPoint.Point-1]
 				// Update lastWritePoint so that the next write opperation will include the
 				// character which has been escaped.
 				lastWritePoint = insPoint.Point
 
 			} else if insPoint.Activated {
+				currentCell.Content += line[lastWritePoint:insPoint.Point]
+
 				switch insPoint.Kind {
 				case bold:
-					endresult.WriteString(line[lastWritePoint:insPoint.Point])
 					lastWritePoint = insPoint.Point + 2
 
 					switch insPoint.Type {
 					case start:
-						endresult.WriteString("<b>")
+						currentlyBold = true
 
 					case end:
-						endresult.WriteString("</b>")
+						currentlyBold = false
 					}
 
 				case italic:
-					endresult.WriteString(line[lastWritePoint:insPoint.Point])
 					lastWritePoint = insPoint.Point + 1
 
 					switch insPoint.Type {
 					case start:
-						endresult.WriteString("<i>")
+						currentlyItalic = true
 
 					case end:
-						endresult.WriteString("</i>")
+						currentlyItalic = false
 					}
 
 				case underline:
-					endresult.WriteString(line[lastWritePoint:insPoint.Point])
 					lastWritePoint = insPoint.Point + 1
 
 					switch insPoint.Type {
 					case start:
-						endresult.WriteString("<u>")
+						currentlyUnderline = true
 
 					case end:
-						endresult.WriteString("</u>")
+						currentlyUnderline = false
 					}
 
 				case note:
-					endresult.WriteString(line[lastWritePoint:insPoint.Point])
 					lastWritePoint = insPoint.Point + 2
 
 					switch insPoint.Type {
 					case start:
-						endresult.WriteString("<ins>")
+						nowComment = true
 
 					case end:
-						endresult.WriteString("</ins>")
+						nowComment = false
 					}
+				}
+
+				if !currentCell.Empty() {
+					currentLine = append(currentLine, currentCell)
+				}
+
+				currentCell = ast.Cell{
+					Boldface:  currentlyBold,
+					Italics:   currentlyItalic,
+					Underline: currentlyUnderline,
+					Comment:   nowComment,
 				}
 			}
 		}
 
 		// Write any remaining text
-		endresult.WriteString(line[lastWritePoint:])
+		currentCell.Content += line[lastWritePoint:]
 
-		// We don't have to write any extra closing tags as we only write an opening
-		// one when we have a closing tag.
+		// Add cell to line and add line to result.
+		if !currentCell.Empty() {
+			currentLine = append(currentLine, currentCell)
+		}
 
-		// Add end of line marker.
-		endresult.WriteString("<br>\n")
+		endResult = append(endResult, currentLine)
 	}
-
-	// Close any leftover comment.
-	if nowComment {
-		endresult.WriteString("</ins>")
-	}
-
-	text := endresult.String()
 
 	// We have one unwanted newline at the end so remove that.
-	return strings.TrimSuffix(text, "<br>\n")
+	return endResult
 }
