@@ -1,5 +1,9 @@
 package ast
 
+import (
+	"strings"
+)
+
 // ElementType is another representation of an elements type
 type ElementType byte
 
@@ -54,4 +58,16 @@ func GetElementType(elem Element) ElementType {
 	default:
 		return TNone
 	}
+}
+
+// LinesToString gets a string representation of a list of strings
+func LinesToString(lines []Line) string {
+	builder := strings.Builder{}
+
+	for _, line := range lines {
+		builder.WriteString(line.String())
+		builder.WriteByte('\n')
+	}
+
+	return builder.String()
 }

@@ -1,7 +1,6 @@
 package pdf
 
 import (
-	"html"
 	"strings"
 	"time"
 
@@ -49,21 +48,30 @@ func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
 
 	// HANDLE METADATA:
 	// Handle play theming
-	currentTheme = themeMap[strings.ToLower(script.TitlePage["type"])]
+	richTheme := script.TitlePage["type"]
+	var currentTheme aTheme
+	if len(richTheme) != 0 {
+		currentTheme = themeMap[strings.ToLower(richTheme[0].String())]
+	}
 
 	if currentTheme == nil {
 		currentTheme = screenplay
 	}
 
 	// Clean up title
-	title := removeAllTags(script.TitlePage["title"])
+	title := ast.LinesToString(script.TitlePage["title"])
 	title = strings.Replace(title, "\n", " ", -1)
-	title = html.UnescapeString(title)
+
+	// Get the author(s)
+	authors := script.TitlePage["authors"]
+	if len(authors) == 0 || authors[0].Lenght() == 0 {
+		authors = script.TitlePage["author"]
+	}
 
 	// Add PDF info
 	thisPDF.SetInfo(gopdf.PdfInfo{
 		Title:        title,
-		Author:       script.TitlePage["author"],
+		Author:       ast.LinesToString(authors),
 		Creator:      "Wrap",
 		Producer:     "Wraparound PDF",
 		CreationDate: time.Now(),
@@ -116,10 +124,10 @@ func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
 				thisPDF.Br(float64(firstLineLeading) * em)
 				// Left
 				thisPDF.SetX(leftMargin - 7.5*en)
-				addCell(section.Metadata["scenenumber"].(aCell))
+				addCell(section.Metadata["scenenumber"].(ast.Cell))
 				// Right
 				thisPDF.SetX(pageWidth - rightMargin + 2.5*en)
-				addCell(section.Metadata["scenenumber"].(aCell))
+				addCell(section.Metadata["scenenumber"].(ast.Cell))
 
 				thisPDF.SetY(oldY) // Prepare for the slugline.
 			}
@@ -128,7 +136,7 @@ func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
 			addLines(section.Lines)
 
 		case ast.TDialogue:
-			var lastCharacterLine aLine
+			var lastCharacterLine styledLine
 			for i, line := range section.Lines {
 				addedLeading := line.leading()
 
@@ -154,9 +162,9 @@ func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
 						// If it just fits we skip this special breaking, unless it's followed by dialogue stuff.
 						!(linesOnPage+addedLeading+1 == maxNumOfLines && i+1 >= len(section.Lines)) {
 						// First add the more tag.
-						addLine(aLine{
+						addLine(styledLine{
 							Type: more,
-							Content: []aCell{aCell{
+							Content: []ast.Cell{ast.Cell{
 								Content: currentTranslation.More,
 							}},
 						})
@@ -167,7 +175,7 @@ func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
 						// Only add (cont'd) tag when not yet pressent:
 						if !strings.HasSuffix(strings.ToLower(strings.TrimSpace(
 							tmpLine.Content[len(tmpLine.Content)-1].Content)), currentTranslation.Contd) {
-							tmpLine.Content = append(tmpLine.Content, aCell{
+							tmpLine.Content = append(tmpLine.Content, ast.Cell{
 								Content: " " + currentTranslation.Contd,
 							})
 						}

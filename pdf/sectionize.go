@@ -7,7 +7,7 @@ import (
 )
 
 type aSection struct {
-	Lines    []aLine
+	Lines    []styledLine
 	Type     ast.ElementType
 	Metadata map[string]interface{}
 }
@@ -21,45 +21,45 @@ func (section aSection) height() int {
 }
 
 func sectionize(element ast.Element) aSection {
-	var lines []aLine
+	var lines []styledLine
 	metadata := map[string]interface{}{}
 
 	switch element.(type) {
 	case ast.Action:
-		lines = append(lines, cellify(string(element.(ast.Action)), action)...)
+		lines = append(lines, cellify(element.(ast.Action), action)...)
 
 	case ast.BeginAct:
 		// Begin of act is on a new page.
-		lines = append(lines, cellify(string(element.(ast.BeginAct)), act)...)
+		lines = append(lines, cellify(element.(ast.BeginAct), act)...)
 
 	case ast.EndAct:
-		lines = append(lines, cellify(string(element.(ast.EndAct)), act)...)
+		lines = append(lines, cellify(element.(ast.EndAct), act)...)
 
 	case ast.CenteredText:
-		lines = append(lines, cellify(string(element.(ast.CenteredText)), centeredText)...)
+		lines = append(lines, cellify(element.(ast.CenteredText), centeredText)...)
 
 	case ast.Lyrics:
-		lines = append(lines, cellify(string(element.(ast.Lyrics)), looseLyrics)...)
+		lines = append(lines, cellify(element.(ast.Lyrics), looseLyrics)...)
 
 	case ast.Scene:
-		metadata["scenenumber"] = aCell{Content: element.(ast.Scene).SceneNumber}
+		metadata["scenenumber"] = ast.Cell{Content: element.(ast.Scene).SceneNumber}
 		lines = append(lines, cellify(element.(ast.Scene).Slugline, slugLine)...)
 
 	case ast.Transition:
-		lines = append(lines, cellify(string(element.(ast.Transition)), transition)...)
+		lines = append(lines, cellify(element.(ast.Transition), transition)...)
 
 	case ast.Dialogue:
 		lines = append(lines, cellify(element.(ast.Dialogue).Character, character)...)
 		for _, elem := range element.(ast.Dialogue).Lines {
 			switch elem.(type) {
 			case ast.Parenthetical:
-				lines = append(lines, cellify(string(elem.(ast.Parenthetical)), parenthetical)...)
+				lines = append(lines, cellify(elem.(ast.Parenthetical), parenthetical)...)
 
 			case ast.Speech:
-				lines = append(lines, cellify(string(elem.(ast.Speech)), dialogue)...)
+				lines = append(lines, cellify(elem.(ast.Speech), dialogue)...)
 
 			case ast.Lyrics:
-				lines = append(lines, cellify(string(elem.(ast.Lyrics)), lyrics)...)
+				lines = append(lines, cellify(elem.(ast.Lyrics), lyrics)...)
 			}
 		}
 
@@ -75,26 +75,26 @@ func sectionize(element ast.Element) aSection {
 			if i < len(leftDialogue) {
 				switch leftDialogue[i].(type) {
 				case ast.Parenthetical:
-					lines = append(lines, cellify(string(leftDialogue[i].(ast.Parenthetical)), dualParentheticalOne)...)
+					lines = append(lines, cellify(leftDialogue[i].(ast.Parenthetical), dualParentheticalOne)...)
 
 				case ast.Speech:
-					lines = append(lines, cellify(string(leftDialogue[i].(ast.Speech)), dualDialogueOne)...)
+					lines = append(lines, cellify(leftDialogue[i].(ast.Speech), dualDialogueOne)...)
 
 				case ast.Lyrics:
-					lines = append(lines, cellify(string(leftDialogue[i].(ast.Lyrics)), dualLyricsOne)...)
+					lines = append(lines, cellify(leftDialogue[i].(ast.Lyrics), dualLyricsOne)...)
 				}
 			}
 
 			if i < len(rightDialogue) {
 				switch rightDialogue[i].(type) {
 				case ast.Parenthetical:
-					lines = append(lines, cellify(string(rightDialogue[i].(ast.Parenthetical)), dualParentheticalTwo)...)
+					lines = append(lines, cellify(rightDialogue[i].(ast.Parenthetical), dualParentheticalTwo)...)
 
 				case ast.Speech:
-					lines = append(lines, cellify(string(rightDialogue[i].(ast.Speech)), dualDialogueTwo)...)
+					lines = append(lines, cellify(rightDialogue[i].(ast.Speech), dualDialogueTwo)...)
 
 				case ast.Lyrics:
-					lines = append(lines, cellify(string(rightDialogue[i].(ast.Lyrics)), dualLyricsTwo)...)
+					lines = append(lines, cellify(rightDialogue[i].(ast.Lyrics), dualLyricsTwo)...)
 				}
 			}
 		}

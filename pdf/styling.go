@@ -2,6 +2,8 @@ package pdf
 
 import (
 	"strings"
+
+	"github.com/Wraparound/wrap/ast"
 )
 
 // This file contains tools for theming.
@@ -65,7 +67,7 @@ var themeMap = map[string]aTheme{
 }
 
 // Returns the leading in lines.
-func (line aLine) leading() int {
+func (line styledLine) leading() int {
 	// Get the theming for this line type.
 	currentStyle := currentTheme[line.Type]
 
@@ -79,7 +81,7 @@ func (line aLine) leading() int {
 	return 0
 }
 
-func styleLine(line aLine) {
+func styleLine(line styledLine) {
 	// First handle the theming
 	currentStyle := currentTheme[line.Type]
 
@@ -131,7 +133,11 @@ func styleLine(line aLine) {
 	thisPDF.Br(1 * em)
 }
 
-func addCell(cell aCell) {
+func addCell(cell ast.Cell) {
+	if cell.Comment {
+		return
+	}
+
 	fontStyle := ""
 
 	if cell.Underline {
