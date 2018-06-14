@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"strings"
+	"bytes"
 )
 
 // ElementType is another representation of an elements type
@@ -62,12 +62,12 @@ func GetElementType(elem Element) ElementType {
 
 // LinesToString gets a string representation of a list of strings
 func LinesToString(lines []Line) string {
-	builder := strings.Builder{}
+	buffer := bytes.NewBufferString("")
 
 	for _, line := range lines {
-		builder.WriteString(line.String())
-		builder.WriteByte('\n')
+		buffer.ReadFrom(line.StringBuffer())
+		buffer.WriteByte('\n')
 	}
 
-	return builder.String()
+	return buffer.String()
 }

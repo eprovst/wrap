@@ -141,8 +141,10 @@ func Parser(input io.Reader) (*ast.Script, error) {
 	}
 
 	// All metadata is collected, now set the used language.
-	if UseWrapExtensions {
-		language = languages.GetLanguage(titlp["language"][0].String())
+	richLanguage := titlp["language"]
+
+	if UseWrapExtensions && len(richLanguage) != 0 {
+		language = languages.GetLanguage(richLanguage[0].String())
 
 	} else {
 		/* If we're not using the Wrap extensions the language

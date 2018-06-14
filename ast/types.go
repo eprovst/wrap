@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"bytes"
 	"strings"
 	"unicode/utf8"
 
@@ -37,15 +38,20 @@ func (line Line) Empty() bool {
 	return true
 }
 
-// String returns a plaintext version of the line
-func (line Line) String() string {
-	builder := strings.Builder{}
+// StringBuffer returns a buffer containing the contents of the line
+func (line Line) StringBuffer() *bytes.Buffer {
+	buffer := bytes.NewBufferString("")
 
 	for _, cell := range line {
-		builder.WriteString(cell.Content)
+		buffer.WriteString(cell.Content)
 	}
 
-	return builder.String()
+	return buffer
+}
+
+// String returns a plaintext version of the line
+func (line Line) String() string {
+	return line.StringBuffer().String()
 }
 
 // Cell contains richtext
