@@ -15,6 +15,8 @@ const (
 	underline
 	note
 	backslash
+	linebreak
+	emptyline
 )
 
 const (
@@ -38,31 +40,26 @@ type insertionPoint struct {
 */
 
 func textHandler(lines []string) []ast.Line {
-	endResult := []ast.Line{}
-	currentLine := ast.Line{}
-	currentCell := ast.Cell{}
-
-	// Keep note if we're in a comment or not.
+	insertPs := []insertionPoint{}
 	nowComment := false
 
 	for _, line := range lines {
 		// Details of amount of spaces are handled by Parser()
 		if line == "" {
-			if nowComment {
-				// If there are less than two spaces on an empty line -> end comment.
-				nowComment = false
+			nowComment = false
 
-				if !currentCell.Empty() {
-					currentLine = append(currentLine, currentCell)
-				}
-			}
+			insertPs = append(insertPs,
+				insertionPoint{
+					Kind:      emptyline,
+					Type:      start,
+					Point:     0,
+					Activated: true,
+				},
+			)
 
-			endResult = append(endResult, currentLine)
-			currentLine = ast.Line{}
-			continue // Line is done.
+			// Line is done
+			continue
 		}
-
-		var insertPs []insertionPoint
 
 		// Replace tab by four spaces
 		line = strings.Replace(line, "\t", strings.Repeat(" ", 4), -1)
@@ -250,255 +247,290 @@ func textHandler(lines []string) []ast.Line {
 			}
 		}
 
-		// Activate insert points.
-		// No need to check comments, they are already activated when needed above.
-		// This also handles bold as italics
-		nowBold := false
-		startPointBold := 0
-		nowItalic := false
-		startPointItalic := 0
-		nowPotentiallyItalic := false // Keep track of double ** that start italics
-		startPointPotentiallyItalic := 0
-		nowUnderline := false
-		startPointUnderline := 0
+		insertPs = append(insertPs,
+			insertionPoint{
+				Kind:      linebreak,
+				Type:      start,
+				Point:     len(line),
+				Activated: true,
+			},
+		)
+	}
 
-		for location := 0; location < len(insertPs); location++ {
-			// An insertpoint can only be activated when it's not escaped.
-			if !insertPs[location].Escaped {
-				switch insertPs[location].Type {
-				case start:
-					switch insertPs[location].Kind {
-					case bold:
+	// Activate insert points.
+	// No need to check comments, they are already activated when needed above.
+	// This also handles bold as italics
+	nowBold := false
+	startPointBold := 0
+	nowItalic := false
+	startPointItalic := 0
+	nowPotentiallyItalic := false // Keep track of double ** that start italics
+	startPointPotentiallyItalic := 0
+	nowUnderline := false
+	startPointUnderline := 0
+
+	for location := 0; location < len(insertPs); location++ {
+		// An insertpoint can only be activated when it's not escaped.
+		if !insertPs[location].Escaped {
+			switch insertPs[location].Type {
+			case start:
+				switch insertPs[location].Kind {
+				// case linebreak don't do anything
+
+				case emptyline:
+					nowBold = false
+					nowItalic = false
+					nowPotentiallyItalic = false
+					nowUnderline = false
+
+				case bold:
+					nowBold = true
+					startPointBold = location
+					nowPotentiallyItalic = true // Might be italics...
+					startPointPotentiallyItalic = location
+
+				case italic:
+					nowItalic = true
+					startPointItalic = location
+
+				case underline:
+					nowUnderline = true
+					startPointUnderline = location
+				}
+
+			case end:
+				switch insertPs[location].Kind {
+				case bold:
+					if nowBold {
+						nowBold = false
+						nowPotentiallyItalic = false // Nope it really is bold.
+						insertPs[startPointBold].Activated = true
+						insertPs[location].Activated = true
+
+					} else if nowItalic {
+						// This could also be the end of italics...
+						// Not potential italics, as those were bold.
+						nowItalic = false
+						insertPs[startPointItalic].Activated = true
+						insertPs[location].Kind = italic
+						insertPs[location].Activated = true
+					}
+
+				case italic:
+					if nowItalic {
+						nowItalic = false
+						nowPotentiallyItalic = false // This isn't possible anymore...
+						insertPs[startPointItalic].Activated = true
+						insertPs[location].Activated = true
+
+					} else if nowPotentiallyItalic {
+						nowPotentiallyItalic = false
+						nowBold = false // Nope it apparently was italics
+						insertPs[startPointPotentiallyItalic].Activated = true
+						insertPs[startPointPotentiallyItalic].Kind = italic
+						insertPs[location].Activated = true
+					}
+
+				case underline:
+					if nowUnderline {
+						nowUnderline = false
+						insertPs[startPointUnderline].Activated = true
+						insertPs[location].Activated = true
+					}
+				}
+
+			case vague:
+				switch insertPs[location].Kind {
+				case bold:
+					if nowBold {
+						nowBold = false
+						nowPotentiallyItalic = false // Not possible anymore
+						insertPs[startPointBold].Activated = true
+						insertPs[location].Type = end
+						insertPs[location].Activated = true
+
+					} else if nowItalic {
+						nowItalic = false
+						// We now have to split this in two, so first make this point
+						// An active italics end.
+						insertPs[startPointItalic].Activated = true
+						insertPs[location].Type = end
+						insertPs[location].Kind = italic
+						insertPs[location].Activated = true
+
+						// Now add the next character as a potential italics start.
+						insertPsTail := insertPs[location+1:]
+						insertPs = append(insertPs[:location+1],
+							insertionPoint{
+								Kind:      italic,
+								Type:      start,
+								Point:     insertPs[location].Point + 1,
+								Activated: false,
+								Escaped:   false,
+							},
+						)
+						insertPs = append(insertPs, insertPsTail...)
+
+					} else {
 						nowBold = true
 						startPointBold = location
 						nowPotentiallyItalic = true // Might be italics...
 						startPointPotentiallyItalic = location
+						insertPs[location].Type = start
+					}
 
-					case italic:
+				case italic:
+					if nowItalic {
+						nowItalic = false
+						nowPotentiallyItalic = false // This isn't possible anymore...
+						insertPs[startPointItalic].Activated = true
+						insertPs[location].Type = end
+						insertPs[location].Activated = true
+
+					} else if nowPotentiallyItalic && // And they are not next to each other
+						insertPs[location].Point-insertPs[startPointPotentiallyItalic].Point != 2 {
+
+						nowPotentiallyItalic = false
+						nowBold = false // Nope it apparently was italics
+						insertPs[startPointPotentiallyItalic].Activated = true
+						insertPs[startPointPotentiallyItalic].Kind = italic
+						insertPs[location].Type = end
+						insertPs[location].Activated = true
+
+					} else {
 						nowItalic = true
+						insertPs[location].Type = start
 						startPointItalic = location
+					}
 
-					case underline:
+				case underline:
+					if nowUnderline {
+						nowUnderline = false
+						insertPs[startPointUnderline].Activated = true
+						insertPs[location].Type = end
+						insertPs[location].Activated = true
+
+					} else {
 						nowUnderline = true
+						insertPs[location].Type = start
 						startPointUnderline = location
-					}
-
-				case end:
-					switch insertPs[location].Kind {
-					case bold:
-						if nowBold {
-							nowBold = false
-							nowPotentiallyItalic = false // Nope it really is bold.
-							insertPs[startPointBold].Activated = true
-							insertPs[location].Activated = true
-
-						} else if nowItalic {
-							// This could also be the end of italics...
-							// Not potential italics, as those were bold.
-							nowItalic = false
-							insertPs[startPointItalic].Activated = true
-							insertPs[location].Kind = italic
-							insertPs[location].Activated = true
-						}
-
-					case italic:
-						if nowItalic {
-							nowItalic = false
-							nowPotentiallyItalic = false // This isn't possible anymore...
-							insertPs[startPointItalic].Activated = true
-							insertPs[location].Activated = true
-
-						} else if nowPotentiallyItalic {
-							nowPotentiallyItalic = false
-							nowBold = false // Nope it apparently was italics
-							insertPs[startPointPotentiallyItalic].Activated = true
-							insertPs[startPointPotentiallyItalic].Kind = italic
-							insertPs[location].Activated = true
-						}
-
-					case underline:
-						if nowUnderline {
-							nowUnderline = false
-							insertPs[startPointUnderline].Activated = true
-							insertPs[location].Activated = true
-						}
-					}
-
-				case vague:
-					switch insertPs[location].Kind {
-					case bold:
-						if nowBold {
-							nowBold = false
-							nowPotentiallyItalic = false // Not possible anymore
-							insertPs[startPointBold].Activated = true
-							insertPs[location].Type = end
-							insertPs[location].Activated = true
-
-						} else if nowItalic {
-							nowItalic = false
-							// We now have to split this in two, so first make this point
-							// An active italics end.
-							insertPs[startPointItalic].Activated = true
-							insertPs[location].Type = end
-							insertPs[location].Kind = italic
-							insertPs[location].Activated = true
-
-							// Now add the next character as a potential italics start.
-							insertPsTail := insertPs[location+1:]
-							insertPs = append(insertPs[:location+1],
-								insertionPoint{
-									Kind:      italic,
-									Type:      start,
-									Point:     insertPs[location].Point + 1,
-									Activated: false,
-									Escaped:   false,
-								},
-							)
-							insertPs = append(insertPs, insertPsTail...)
-
-						} else {
-							nowBold = true
-							startPointBold = location
-							nowPotentiallyItalic = true // Might be italics...
-							startPointPotentiallyItalic = location
-							insertPs[location].Type = start
-						}
-
-					case italic:
-						if nowItalic {
-							nowItalic = false
-							nowPotentiallyItalic = false // This isn't possible anymore...
-							insertPs[startPointItalic].Activated = true
-							insertPs[location].Type = end
-							insertPs[location].Activated = true
-
-						} else if nowPotentiallyItalic && // And they are not next to each other
-							insertPs[location].Point-insertPs[startPointPotentiallyItalic].Point != 2 {
-
-							nowPotentiallyItalic = false
-							nowBold = false // Nope it apparently was italics
-							insertPs[startPointPotentiallyItalic].Activated = true
-							insertPs[startPointPotentiallyItalic].Kind = italic
-							insertPs[location].Type = end
-							insertPs[location].Activated = true
-
-						} else {
-							nowItalic = true
-							insertPs[location].Type = start
-							startPointItalic = location
-						}
-
-					case underline:
-						if nowUnderline {
-							nowUnderline = false
-							insertPs[startPointUnderline].Activated = true
-							insertPs[location].Type = end
-							insertPs[location].Activated = true
-
-						} else {
-							nowUnderline = true
-							insertPs[location].Type = start
-							startPointUnderline = location
-						}
 					}
 				}
 			}
 		}
+	}
 
-		// Start writing
-		// Shifting isn't an issue, as we don't change the read string.
-		lastWritePoint := 0
+	// Start writing
+	endResult := []ast.Line{}
+	currentLine := ast.Line{}
+	currentCell := ast.Cell{}
 
-		currentlyBold := false
-		currentlyItalic := false
-		currentlyUnderline := false
+	// Shifting isn't an issue, as we don't change the read string.
+	lastWritePoint := 0
 
-		for _, insPoint := range insertPs {
-			if insPoint.Escaped {
-				// Add everything appart from the (first) backslash.
-				currentCell.Content += line[lastWritePoint : insPoint.Point-1]
-				// Update lastWritePoint so that the next write opperation will include the
-				// character which has been escaped.
-				lastWritePoint = insPoint.Point
+	currentlyBold := false
+	currentlyItalic := false
+	currentlyUnderline := false
+	currentlyComment := false
 
-			} else if insPoint.Activated {
-				currentCell.Content += line[lastWritePoint:insPoint.Point]
+	line := 0
+	for _, insPoint := range insertPs {
+		if insPoint.Escaped {
+			// Add everything appart from the (first) backslash.
+			currentCell.Content += lines[line][lastWritePoint : insPoint.Point-1]
+			// Update lastWritePoint so that the next write opperation will include the
+			// character which has been escaped.
+			lastWritePoint = insPoint.Point
 
-				switch insPoint.Kind {
-				case bold:
-					lastWritePoint = insPoint.Point + 2
+		} else if insPoint.Activated {
+			currentCell.Content += lines[line][lastWritePoint:insPoint.Point]
 
-					switch insPoint.Type {
-					case start:
-						currentlyBold = true
+			switch insPoint.Kind {
+			case bold:
+				lastWritePoint = insPoint.Point + 2
 
-					case end:
-						currentlyBold = false
-					}
+				switch insPoint.Type {
+				case start:
+					currentlyBold = true
 
-				case italic:
-					lastWritePoint = insPoint.Point + 1
-
-					switch insPoint.Type {
-					case start:
-						currentlyItalic = true
-
-					case end:
-						currentlyItalic = false
-					}
-
-				case underline:
-					lastWritePoint = insPoint.Point + 1
-
-					switch insPoint.Type {
-					case start:
-						currentlyUnderline = true
-
-					case end:
-						currentlyUnderline = false
-					}
-
-				case note:
-					lastWritePoint = insPoint.Point + 2
-
-					switch insPoint.Type {
-					case start:
-						nowComment = true
-
-					case end:
-						nowComment = false
-					}
+				case end:
+					currentlyBold = false
 				}
 
+			case italic:
+				lastWritePoint = insPoint.Point + 1
+
+				switch insPoint.Type {
+				case start:
+					currentlyItalic = true
+
+				case end:
+					currentlyItalic = false
+				}
+
+			case underline:
+				lastWritePoint = insPoint.Point + 1
+
+				switch insPoint.Type {
+				case start:
+					currentlyUnderline = true
+
+				case end:
+					currentlyUnderline = false
+				}
+
+			case note:
+				lastWritePoint = insPoint.Point + 2
+
+				switch insPoint.Type {
+				case start:
+					currentlyComment = true
+
+				case end:
+					currentlyComment = false
+				}
+
+			case emptyline:
+				currentlyBold = false
+				currentlyItalic = false
+				currentlyUnderline = false
+				currentlyComment = false
+				fallthrough
+
+			case linebreak:
+				// Add cell to line and add line to result.
 				if !currentCell.Empty() {
 					currentLine = append(currentLine, currentCell)
 				}
+
+				endResult = append(endResult, currentLine)
+
+				// Reset for next line
+				currentLine = ast.Line{}
 
 				currentCell = ast.Cell{
 					Boldface:  currentlyBold,
 					Italics:   currentlyItalic,
 					Underline: currentlyUnderline,
-					Comment:   nowComment,
+					Comment:   currentlyComment,
 				}
+
+				line++
+				lastWritePoint = 0
+			}
+
+			if !currentCell.Empty() {
+				currentLine = append(currentLine, currentCell)
+			}
+
+			currentCell = ast.Cell{
+				Boldface:  currentlyBold,
+				Italics:   currentlyItalic,
+				Underline: currentlyUnderline,
+				Comment:   currentlyComment,
 			}
 		}
-
-		// Write any remaining text
-		currentCell.Content += line[lastWritePoint:]
-
-		// Add cell to line and add line to result.
-		if !currentCell.Empty() {
-			currentLine = append(currentLine, currentCell)
-		}
-
-		currentCell = ast.Cell{
-			Comment: nowComment,
-		}
-
-		endResult = append(endResult, currentLine)
-		currentLine = ast.Line{}
 	}
 
-	// We have one unwanted newline at the end so remove that.
 	return endResult
 }
