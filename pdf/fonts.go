@@ -130,7 +130,7 @@ func loadCourierNew() error {
 	// Italic
 	pathToItalic, err := findFont("Courier New Italic.ttf")
 	if err != nil {
-		pathToRegular, err = findFont("couri.ttf")
+		pathToItalic, err = findFont("couri.ttf")
 	}
 
 	if err != nil {
@@ -140,7 +140,7 @@ func loadCourierNew() error {
 	// Bold italic
 	pathToBoldItalic, err := findFont("Courier New Bold Italic.ttf")
 	if err != nil {
-		pathToRegular, err = findFont("courbi.ttf")
+		pathToBoldItalic, err = findFont("courbi.ttf")
 	}
 
 	if err != nil {
