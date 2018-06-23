@@ -22,5 +22,11 @@
 *.pdf
 *.html
 
+# Ignore profiling files
+*.profile
+
+# Ignore builds
+wrap
+
 # Editor
 .vscode/

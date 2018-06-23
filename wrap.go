@@ -15,7 +15,7 @@ func main() {
 
 	// Run the root command
 	if err := cli.WrapCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

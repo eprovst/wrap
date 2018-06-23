@@ -37,12 +37,12 @@ func loadFonts() {
 	if err != nil {
 		if runtime.GOOS == "windows" || runtime.GOOS == "darwin" {
 			// Courier New should be available on macOS and Windows
-			fmt.Println("Warning: " + err.Error())
+			fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
 			err = loadCourierNew()
 		}
 
 		if err != nil {
-			fmt.Println("Error: " + err.Error())
+			fmt.Fprintln(os.Stderr, "Error: "+err.Error())
 			os.Exit(1)
 		}
 	}
