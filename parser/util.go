@@ -15,6 +15,16 @@ func hasPrefixInSlice(line string, prefixes []string) bool {
 	return false
 }
 
+func isUppercase(line string) bool {
+	for _, c := range []rune(line) {
+		if unicode.IsLower(c) {
+			return false
+		}
+	}
+
+	return true
+}
+
 func hasSuffixInSlice(line string, suffixes []string) bool {
 	for _, suffix := range suffixes {
 		if strings.HasSuffix(line, suffix) {

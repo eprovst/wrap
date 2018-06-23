@@ -36,6 +36,7 @@ func isSceneTag(line string) bool {
 	line = normaliseLine(line)
 
 	// Case doesn't matter so make everything lower case.
+	// TODO: This line takes 2ms in total in Big Fish, fix this...
 	line = strings.ToLower(line)
 	if isForcedAction(line) || isForcedSceneTag(line) {
 		return false
@@ -91,8 +92,7 @@ func isBeginAct(line string) bool {
 		return false
 
 	} else if hasPrefixInSlice(line, translation.BeginActTags) {
-		// If the string doesn't change, it's uppercase.
-		return strings.ToUpper(line) == line
+		isUppercase(line)
 	}
 
 	return false
@@ -111,8 +111,7 @@ func isEndAct(line string) bool {
 		return false
 
 	} else if hasPrefixInSlice(line, translation.EndActTags) {
-		// If the string doesn't change, it's uppercase.
-		return strings.ToUpper(line) == line
+		return isUppercase(line)
 	}
 
 	return false
@@ -142,8 +141,7 @@ func isCharacter(line string) bool {
 	// TODO: Replace by nonregex, this quite costly...
 	line = characterExtensionRegex.ReplaceAllString(line, "")
 
-	// If the string doesn't change, it's uppercase.
-	return strings.ToUpper(line) == line && containsLetter(line)
+	return isUppercase(line) && containsLetter(line)
 }
 
 func isForcedCharacter(line string) bool {
