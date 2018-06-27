@@ -2,18 +2,19 @@ package parser
 
 import (
 	"bytes"
-	"regexp"
 	"strings"
 )
 
 // In this file we define functions to parse lines a bit further.
 
-var sceneNumberRegex = regexp.MustCompile("^(.+?)(?:\\s*)(?:#(.+)#)?$")
-
 func parseSceneHeading(line string) (slugline, scenenumber string) {
-	// TODO: Find way to do this without regex...
-	vals := sceneNumberRegex.FindStringSubmatch(line)
-	return vals[1], vals[2]
+	vals := strings.Split(line, "#")
+
+	if len(vals) != 3 || len(vals[2]) != 0 {
+		return line, ""
+	}
+
+	return strings.TrimRight(vals[0], " \t"), vals[1]
 }
 
 func parseSection(line string) (sect string, level uint8) {

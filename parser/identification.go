@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"regexp"
 	"strings"
 	"unicode"
 )
@@ -36,17 +35,15 @@ func isSceneTag(line string) bool {
 	line = normaliseLine(line)
 
 	// Case doesn't matter so make everything lower case.
-	// TODO: This line takes 2ms in total in Big Fish, fix this...
-	line = strings.ToLower(line)
 	if isForcedAction(line) || isForcedSceneTag(line) {
 		return false
 
-	} else if hasPrefixInSlice(line, translation.SceneTags) {
+	} else if hasCaseInsensitivePrefixInSlice(line, translation.SceneTags) {
 		return true
 
-	} else if hasPrefixInSlice(line, translation.StageplaySceneTags) {
+	} else if UseWrapExtensions && hasCaseInsensitivePrefixInSlice(line, translation.StageplaySceneTags) {
 		// Only supported in Wrap
-		return UseWrapExtensions
+		return true
 	}
 
 	return false
@@ -122,7 +119,27 @@ func isForcedEndAct(line string) bool {
 	return strings.HasPrefix(line, "%!") && UseWrapExtensions
 }
 
-var characterExtensionRegex = regexp.MustCompile("\\(.+\\)")
+func isUppercaseIgnoringCharacterExtensions(line string) bool {
+	// NOTE: We do not check if the brackets actually close
+	// we would need a second loop for that and the spec doesn't
+	// say the brackets *have* to be balanced...
+
+	inCharacterExtension := false
+
+	for _, c := range []rune(line) {
+		if c == '(' {
+			inCharacterExtension = true
+
+		} else if c == ')' {
+			inCharacterExtension = false
+
+		} else if !inCharacterExtension && unicode.IsLower(c) {
+			return false
+		}
+	}
+
+	return true
+}
 
 func isCharacter(line string) bool {
 	line = normaliseLine(line)
@@ -137,11 +154,7 @@ func isCharacter(line string) bool {
 		line = strings.TrimPrefix(line, "Mac")
 	}
 
-	// Remove Character-Extensions since these don't have to be in uppercase
-	// TODO: Replace by nonregex, this quite costly...
-	line = characterExtensionRegex.ReplaceAllString(line, "")
-
-	return isUppercase(line) && containsLetter(line)
+	return isUppercaseIgnoringCharacterExtensions(line) && containsLetter(line)
 }
 
 func isForcedCharacter(line string) bool {
