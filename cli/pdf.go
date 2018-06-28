@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/Wraparound/wrap/parser"
@@ -40,13 +38,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 	handle(err)
 
 	// Get the filepath to use during export.
-	if outFlag != "" {
-		pathToFile = outFlag
-
-	} else {
-		extension := filepath.Ext(pathToFile)
-		pathToFile = strings.TrimSuffix(pathToFile, extension) + ".pdf"
-	}
+	pathToFile = getOuputPath(pathToFile)
 
 	startExportTime := time.Now()
 
@@ -54,7 +46,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		pdf.AddSceneNumbers = false
 	}
 
-	err = pdf.WritePDFFile(script, pathToFile)
+	err = pdf.MakePDF(script, pathToFile)
 	handle(err)
 
 	endTime := time.Now()

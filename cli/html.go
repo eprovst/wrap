@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/Wraparound/wrap/html"
@@ -44,12 +42,7 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	handle(err)
 
 	// Get the filepath to use during export.
-	if outFlag != "" {
-		pathToFile = outFlag
-	} else {
-		extension := filepath.Ext(pathToFile)
-		pathToFile = strings.TrimSuffix(pathToFile, extension) + ".html"
-	}
+	pathToFile = getOuputPath(pathToFile)
 
 	startExportTime := time.Now()
 

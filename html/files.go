@@ -7,7 +7,7 @@ import (
 	"github.com/Wraparound/wrap/ast"
 )
 
-// MakeHTML writes the output of WriteHTML()
+// MakeHTML writes the output of WriteHTML() to a file
 func MakeHTML(script *ast.Script, pathToFile string) error {
 	// Open output file
 	out, err := os.Create(pathToFile)
@@ -23,7 +23,7 @@ func MakeHTML(script *ast.Script, pathToFile string) error {
 	return buffer.Flush()
 }
 
-// MakeHTMLPage writes the output of WriteHTMLPage()
+// MakeHTMLPage writes the output of WriteHTMLPage() to a file
 func MakeHTMLPage(script *ast.Script, pathToFile string) error {
 	// Open output file
 	out, err := os.Create(pathToFile)

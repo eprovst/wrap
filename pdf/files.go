@@ -1,25 +1,42 @@
 package pdf
 
 import (
-	"io/ioutil"
+	"bufio"
+	"io"
+	"os"
 
 	"github.com/Wraparound/wrap/ast"
 )
 
-// WritePDFFile writes the output of MakePDF()
-func WritePDFFile(script *ast.Script, pathToFile string) error {
+// MakePDF writes the PDF to a file
+func MakePDF(script *ast.Script, pathToFile string) error {
+	// Open output file
+	out, err := os.Create(pathToFile)
+
+	if err != nil {
+		return err
+	}
+
+	defer out.Close()
+
+	buffer := bufio.NewWriter(out)
+	err = WritePDF(script, buffer)
+
+	if err != nil {
+		return err
+	}
+
+	return buffer.Flush()
+}
+
+// WritePDF writes the PDF to a writer
+func WritePDF(script *ast.Script, writer io.Writer) error {
 	// First convert file
-	pdf, err := MakePDF(script)
+	pdf, err := buildPDF(script)
 
 	if err != nil {
 		return err
 	}
 
-	filecontents, err := pdf.GetBytesPdfReturnErr()
-
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(pathToFile, filecontents, 0666)
+	return pdf.Write(writer)
 }

@@ -20,6 +20,26 @@ func isWrapFile(pathToFile string) bool {
 	return extension == ".wrap"
 }
 
+func stdInPiped() bool {
+	sos, _ := os.Stdin.Stat()
+	return sos.Mode()&os.ModeCharDevice == 0
+}
+
+func stdOutPiped() bool {
+	sos, _ := os.Stdout.Stat()
+	return sos.Mode()&os.ModeCharDevice == 0
+}
+
+func getOuputPath(pathToSource string) string {
+	// Get the filepath to use during export.
+	if outFlag != "" {
+		return outFlag
+	}
+
+	extension := filepath.Ext(pathToSource)
+	return strings.TrimSuffix(pathToSource, extension) + ".pdf"
+}
+
 func printBenchmarks(start, startExport, end time.Time) {
 	fmt.Fprintf(os.Stderr, "Parsing:   %d ms\n", startExport.Sub(start)/time.Millisecond)
 	fmt.Fprintf(os.Stderr, "Exporting: %d ms\n", end.Sub(startExport)/time.Millisecond)

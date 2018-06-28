@@ -36,8 +36,8 @@ var linesOnPage int
 var pageNumber int
 var thisPDF = &gopdf.GoPdf{}
 
-// MakePDF creates a PDF file structure from a script.
-func MakePDF(script *ast.Script) (*gopdf.GoPdf, error) {
+// buildPDF creates a PDF file structure from a script.
+func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 	thisPDF.Start(gopdf.Config{PageSize: gopdf.Rect{W: pageWidth, H: pageHeight}})
 
 	// Set language:
