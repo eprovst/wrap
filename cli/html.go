@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"os"
 	"time"
 
+	"github.com/Wraparound/wrap/ast"
 	"github.com/Wraparound/wrap/html"
 	"github.com/Wraparound/wrap/parser"
 	"github.com/spf13/cobra"
@@ -12,7 +14,7 @@ import (
 var htmlCmd = &cobra.Command{
 	Use:              "html [path to input file]",
 	Short:            "Export file as an HTML webpage",
-	Args:             cobra.ExactArgs(1),
+	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
 	Long:             longDescription,
 	Run:              htmlRun,
@@ -31,18 +33,43 @@ func init() {
 }
 
 func htmlRun(cmd *cobra.Command, args []string) {
-	pathToFile := args[0]
+	startTime := time.Now()
 
-	if isWrapFile(pathToFile) {
+	var (
+		err    error
+		output *os.File
+		script *ast.Script
+	)
+
+	if len(args) == 0 {
+		// Assume Wrap input
 		parser.UseWrapExtensions = true
+
+		// TODO: Handle input from terminal?
+
+		script, err = parser.Parser(os.Stdin)
+		handle(err)
+
+		// Get the file to use during export.
+		// TODO: Make unique
+		output = getOuput("script", "html")
+
+	} else {
+		pathToFile := args[0]
+
+		if isWrapFile(pathToFile) {
+			parser.UseWrapExtensions = true
+		}
+
+		script, err = parser.ParseFile(pathToFile)
+		handle(err)
+
+		// Get the file to use during export.
+		output = getOuput(pathToFile, "html")
 	}
 
-	startTime := time.Now()
-	script, err := parser.ParseFile(pathToFile)
-	handle(err)
-
-	// Get the filepath to use during export.
-	pathToFile = getOuputPath(pathToFile)
+	// Make sure to close the stream...
+	defer output.Close()
 
 	startExportTime := time.Now()
 
@@ -51,13 +78,11 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	}
 
 	if htmlEmbedableFlag {
-		err = html.MakeHTML(script, pathToFile)
+		html.WriteHTML(script, output)
 
 	} else {
-		err = html.MakeHTMLPage(script, pathToFile)
+		html.WriteHTMLPage(script, output)
 	}
-
-	handle(err)
 
 	endTime := time.Now()
 

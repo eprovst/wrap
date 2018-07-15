@@ -30,14 +30,18 @@ func stdOutPiped() bool {
 	return sos.Mode()&os.ModeCharDevice == 0
 }
 
-func getOuputPath(pathToSource string) string {
+func getOuput(pathToSource, extension string) *os.File {
 	// Get the filepath to use during export.
-	if outFlag != "" {
-		return outFlag
+	if stdOutPiped() {
+		return os.Stdout
 	}
 
-	extension := filepath.Ext(pathToSource)
-	return strings.TrimSuffix(pathToSource, extension) + ".pdf"
+	ext := filepath.Ext(pathToSource)
+	path := strings.TrimSuffix(pathToSource, ext) + "." + extension
+	out, err := os.Create(path)
+	handle(err)
+
+	return out
 }
 
 func printBenchmarks(start, startExport, end time.Time) {

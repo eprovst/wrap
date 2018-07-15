@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"os"
 	"time"
 
+	"github.com/Wraparound/wrap/ast"
 	"github.com/Wraparound/wrap/parser"
 	"github.com/Wraparound/wrap/pdf"
 	"github.com/spf13/cobra"
@@ -12,7 +14,7 @@ import (
 var pdfCmd = &cobra.Command{
 	Use:              "pdf [path to input file]",
 	Short:            "Export file as PDF",
-	Args:             cobra.ExactArgs(1),
+	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
 	Long:             longDescription,
 	Run:              pdfRun,
@@ -27,18 +29,43 @@ func init() {
 }
 
 func pdfRun(cmd *cobra.Command, args []string) {
-	pathToFile := args[0]
+	startTime := time.Now()
 
-	if isWrapFile(pathToFile) {
+	var (
+		err    error
+		output *os.File
+		script *ast.Script
+	)
+
+	if len(args) == 0 {
+		// Assume Wrap input
 		parser.UseWrapExtensions = true
+
+		// TODO: Handle input from terminal?
+
+		script, err = parser.Parser(os.Stdin)
+		handle(err)
+
+		// Get the file to use during export.
+		// TODO: Make unique
+		output = getOuput("script", "pdf")
+
+	} else {
+		pathToFile := args[0]
+
+		if isWrapFile(pathToFile) {
+			parser.UseWrapExtensions = true
+		}
+
+		script, err = parser.ParseFile(pathToFile)
+		handle(err)
+
+		// Get the file to use during export.
+		output = getOuput(pathToFile, "pdf")
 	}
 
-	startTime := time.Now()
-	script, err := parser.ParseFile(pathToFile)
-	handle(err)
-
-	// Get the filepath to use during export.
-	pathToFile = getOuputPath(pathToFile)
+	// Make sure to close the stream...
+	defer output.Close()
 
 	startExportTime := time.Now()
 
@@ -46,7 +73,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		pdf.AddSceneNumbers = false
 	}
 
-	err = pdf.MakePDF(script, pathToFile)
+	err = pdf.WritePDF(script, output)
 	handle(err)
 
 	endTime := time.Now()
