@@ -12,7 +12,7 @@ import (
 
 // htmlCmd represents the html command
 var htmlCmd = &cobra.Command{
-	Use:              "html [path to input file]",
+	Use:              "html [path to input file] [> output path]",
 	Short:            "Export file as an HTML webpage",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
@@ -45,9 +45,7 @@ func htmlRun(cmd *cobra.Command, args []string) {
 		// Assume Wrap input
 		parser.UseWrapExtensions = true
 
-		// TODO: Handle input from terminal?
-
-		script, err = parser.Parser(os.Stdin)
+		script, err = getScriptFromStdin()
 		handle(err)
 
 		// Get the file to use during export.

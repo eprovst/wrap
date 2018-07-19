@@ -12,7 +12,7 @@ screen- or stageplay as an HTML or a PDF.`
 // WrapCmd represents the base command when called without any subcommands
 var WrapCmd = &cobra.Command{
 	Use:   "wrap",
-	Short: "Generate HTML and/or PDF output from Fountain files",
+	Short: "Generate HTML and/or PDF output from Fountain/Wrap files",
 	Long:  longDescription,
 }
 

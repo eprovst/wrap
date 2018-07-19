@@ -1,11 +1,15 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/parser"
 )
 
 func handle(err error) {
@@ -42,6 +46,14 @@ func getOuput(pathToSource, extension string) *os.File {
 	handle(err)
 
 	return out
+}
+
+func getScriptFromStdin() (*ast.Script, error) {
+	if stdInPiped() {
+		return parser.Parser(os.Stdin)
+	}
+
+	return nil, errors.New("nothing on standard input")
 }
 
 func printBenchmarks(start, startExport, end time.Time) {

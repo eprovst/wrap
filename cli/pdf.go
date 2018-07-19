@@ -12,7 +12,7 @@ import (
 
 // pdfCmd represents the pdf command
 var pdfCmd = &cobra.Command{
-	Use:              "pdf [path to input file]",
+	Use:              "pdf [path to input file] [> output path]",
 	Short:            "Export file as PDF",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
@@ -41,9 +41,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		// Assume Wrap input
 		parser.UseWrapExtensions = true
 
-		// TODO: Handle input from terminal?
-
-		script, err = parser.Parser(os.Stdin)
+		script, err = getScriptFromStdin()
 		handle(err)
 
 		// Get the file to use during export.
