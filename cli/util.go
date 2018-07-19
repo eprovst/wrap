@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,6 +55,28 @@ func getScriptFromStdin() (*ast.Script, error) {
 	}
 
 	return nil, errors.New("nothing on standard input")
+}
+
+func makeUnique(filename string, extension string) (string, error) {
+	// First try the normal name
+	file := filename + "." + extension
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return filename, nil
+	}
+
+	// Try to find a unique name
+	for i := 1; i < 256; i++ {
+		filenm := filename + "_" + strconv.Itoa(i)
+		file = filenm + "." + extension
+
+		if _, err := os.Stat(file); os.IsNotExist(err) {
+			return filenm, nil
+		}
+	}
+
+	// We could go further, but 256 times the same file name
+	// come on...
+	return "", errors.New("no unique file name possible")
 }
 
 func printBenchmarks(start, startExport, end time.Time) {

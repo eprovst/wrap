@@ -49,8 +49,10 @@ func htmlRun(cmd *cobra.Command, args []string) {
 		handle(err)
 
 		// Get the file to use during export.
-		// TODO: Make unique
-		output = getOuput("script", "html")
+		path, err := makeUnique("script", "html")
+		handle(err)
+
+		output = getOuput(path, "html")
 
 	} else {
 		pathToFile := args[0]

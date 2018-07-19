@@ -45,8 +45,10 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		handle(err)
 
 		// Get the file to use during export.
-		// TODO: Make unique
-		output = getOuput("script", "pdf")
+		path, err := makeUnique("script", "pdf")
+		handle(err)
+
+		output = getOuput(path, "pdf")
 
 	} else {
 		pathToFile := args[0]
