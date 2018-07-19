@@ -64,7 +64,13 @@ type Cell struct {
 }
 
 // Lenght of a Cell is the amount of runes in it
+// 0 if the cell is a comment
 func (cell Cell) Lenght() int {
+	// Comments have no lenght
+	if cell.Comment {
+		return 0
+	}
+
 	return utf8.RuneCountInString(cell.Content)
 }
 
