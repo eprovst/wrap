@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bufio"
 	"os"
 	"time"
 
@@ -67,14 +68,17 @@ func pdfRun(cmd *cobra.Command, args []string) {
 	// Make sure to close the stream...
 	defer output.Close()
 
+	// Make a write buffer
+	buffer := bufio.NewWriter(output)
+
 	startExportTime := time.Now()
 
 	if pdfNoscenenumbersFlag {
 		pdf.AddSceneNumbers = false
 	}
 
-	err = pdf.WritePDF(script, output)
-	handle(err)
+	handle(pdf.WritePDF(script, buffer))
+	handle(buffer.Flush())
 
 	endTime := time.Now()
 

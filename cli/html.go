@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bufio"
 	"os"
 	"time"
 
@@ -71,6 +72,9 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	// Make sure to close the stream...
 	defer output.Close()
 
+	// Make a write buffer
+	buffer := bufio.NewWriter(output)
+
 	startExportTime := time.Now()
 
 	if htmlNoscenenumbersFlag {
@@ -78,11 +82,13 @@ func htmlRun(cmd *cobra.Command, args []string) {
 	}
 
 	if htmlEmbedableFlag {
-		html.WriteHTML(script, output)
+		html.WriteHTML(script, buffer)
 
 	} else {
-		html.WriteHTMLPage(script, output)
+		html.WriteHTMLPage(script, buffer)
 	}
+
+	handle(buffer.Flush())
 
 	endTime := time.Now()
 
