@@ -36,11 +36,20 @@ func stdOutPiped() bool {
 }
 
 func getOuput(pathToSource, extension string) *os.File {
-	// Get the filepath to use during export.
+	// Get the file to use during export.
+	if outFlag != "" {
+		out, err := os.Create(outFlag)
+		handle(err)
+
+		return out
+	}
+
+	// No output specified, is another program expecting our output?
 	if stdOutPiped() {
 		return os.Stdout
 	}
 
+	// None of the above, make a new file with the same name as the source
 	ext := filepath.Ext(pathToSource)
 	path := strings.TrimSuffix(pathToSource, ext) + "." + extension
 	out, err := os.Create(path)

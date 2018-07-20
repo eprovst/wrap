@@ -17,10 +17,12 @@ var WrapCmd = &cobra.Command{
 }
 
 var (
+	outFlag       string
 	benchmarkFlag bool
 )
 
 func init() {
 	// Define flags used by all subcommands
+	WrapCmd.PersistentFlags().StringVarP(&outFlag, "out", "o", "", "specify the `file` name to be used")
 	WrapCmd.PersistentFlags().BoolVar(&benchmarkFlag, "benchmark", false, "measure the time spend on certain tasks")
 }
