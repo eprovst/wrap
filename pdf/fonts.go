@@ -11,6 +11,20 @@ import (
 	"github.com/signintech/gopdf"
 )
 
+// SelectableFont are fonts that the PDF export can use
+type SelectableFont int
+
+// List of selectable fonts
+const (
+	Auto SelectableFont = iota
+	CourierPrime
+	CourierNew
+	FreeMono
+)
+
+// SelectedFont is the font to be used during export, Auto by default
+var SelectedFont = Auto
+
 func findFont(font string) (string, error) {
 	path, err := findfont.Find(font)
 
@@ -30,22 +44,49 @@ func findFont(font string) (string, error) {
 }
 
 func loadFonts() {
-	// Courier Prime
-	err := loadCourierPrime()
-
-	if err != nil {
-		// Courier New should be available on macOS and Windows
-		fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
-		err = loadCourierNew()
+	if SelectedFont == CourierPrime {
+		err := loadCourierPrime()
 
 		if err != nil {
-			// FreeMono as a final attempt
+			fmt.Fprintln(os.Stderr, "Error: "+err.Error())
+			os.Exit(1)
+		}
+
+	} else if SelectedFont == CourierNew {
+		err := loadCourierNew()
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error: "+err.Error())
+			os.Exit(1)
+		}
+
+	} else if SelectedFont == FreeMono {
+		err := loadGNUFreeFontMono()
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error: "+err.Error())
+			os.Exit(1)
+		}
+
+	} else {
+		// Attempt auto selection
+		// Courier Prime
+		err := loadCourierPrime()
+
+		if err != nil {
+			// Courier New should be available on macOS and Windows
 			fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
-			err = loadGNUFreeFontMono()
+			err = loadCourierNew()
 
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "Error: "+err.Error())
-				os.Exit(1)
+				// FreeMono as a final attempt
+				fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
+				err = loadGNUFreeFontMono()
+
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "Error: "+err.Error())
+					os.Exit(1)
+				}
 			}
 		}
 	}

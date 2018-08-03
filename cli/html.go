@@ -13,7 +13,7 @@ import (
 
 // htmlCmd represents the html command
 var htmlCmd = &cobra.Command{
-	Use:              "html [path to input file] [> output path]",
+	Use:              "html [path to input file]",
 	Short:            "Export file as an HTML webpage",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
@@ -28,7 +28,7 @@ var (
 
 func init() {
 	htmlCmd.Flags().BoolVarP(&htmlEmbedableFlag, "embedable", "e", false, "only output the play itself")
-	htmlCmd.Flags().BoolVarP(&htmlNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
+	htmlCmd.Flags().BoolVarP(&htmlNoscenenumbersFlag, "no-scene-numbers", "s", false, "remove scenenumbers from output")
 
 	WrapCmd.AddCommand(htmlCmd)
 }

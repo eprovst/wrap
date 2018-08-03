@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+	"errors"
 	"os"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 
 // pdfCmd represents the pdf command
 var pdfCmd = &cobra.Command{
-	Use:              "pdf [path to input file] [> output path]",
+	Use:              "pdf [path to input file]",
 	Short:            "Export file as PDF",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
@@ -21,16 +22,44 @@ var pdfCmd = &cobra.Command{
 	Run:              pdfRun,
 }
 
-var pdfNoscenenumbersFlag bool
+var (
+	pdfNoscenenumbersFlag bool
+	useCourierPrime       bool
+	useCourierNew         bool
+	useFreeMono           bool
+)
 
 func init() {
-	pdfCmd.Flags().BoolVarP(&pdfNoscenenumbersFlag, "noscenenumbers", "s", false, "remove scenenumbers from output")
+	pdfCmd.Flags().BoolVarP(&pdfNoscenenumbersFlag, "no-scene-numbers", "s", false, "remove scenenumbers from output")
+	pdfCmd.Flags().BoolVar(&useCourierPrime, "use-courier-prime", false, "force the usage of Courier Prime")
+	pdfCmd.Flags().BoolVar(&useCourierNew, "use-courier-new", false, "force the usage of Courier New")
+	pdfCmd.Flags().BoolVar(&useFreeMono, "use-freemono", false, "force the usage of GNU FreeMono")
 
 	WrapCmd.AddCommand(pdfCmd)
 }
 
 func pdfRun(cmd *cobra.Command, args []string) {
 	startTime := time.Now()
+
+	// Evaluate font selection
+	if useCourierPrime && useCourierNew || useCourierPrime && useFreeMono || useCourierNew && useFreeMono {
+		// The fonts are mutualy exclusive so throw an error
+		handle(errors.New("tried to force multiple fonts at the same time"))
+	}
+
+	if useCourierPrime {
+		pdf.SelectedFont = pdf.CourierPrime
+
+	} else if useCourierNew {
+		pdf.SelectedFont = pdf.CourierNew
+
+	} else if useFreeMono {
+		pdf.SelectedFont = pdf.FreeMono
+
+	} else {
+		// Else use automatic font selection
+		pdf.SelectedFont = pdf.Auto
+	}
 
 	var (
 		err    error
