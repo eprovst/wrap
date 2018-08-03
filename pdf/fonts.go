@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	findfont "github.com/flopp/go-findfont"
@@ -35,15 +34,19 @@ func loadFonts() {
 	err := loadCourierPrime()
 
 	if err != nil {
-		if runtime.GOOS == "windows" || runtime.GOOS == "darwin" {
-			// Courier New should be available on macOS and Windows
-			fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
-			err = loadCourierNew()
-		}
+		// Courier New should be available on macOS and Windows
+		fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
+		err = loadCourierNew()
 
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error: "+err.Error())
-			os.Exit(1)
+			// FreeMono as a final attempt
+			fmt.Fprintln(os.Stderr, "Warning: "+err.Error())
+			err = loadGNUFreeFontMono()
+
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error: "+err.Error())
+				os.Exit(1)
+			}
 		}
 	}
 
@@ -161,6 +164,56 @@ func loadCourierNew() error {
 		})
 
 	thisPDF.AddTTFFontWithOption("courier", pathToBoldItalic,
+		gopdf.TtfOption{
+			Style: gopdf.Italic | gopdf.Bold,
+		})
+
+	return nil
+}
+
+func loadGNUFreeFontMono() error {
+	// Regular
+	pathToRegular, err := findFont("FreeMono.ttf")
+
+	if err != nil {
+		return errors.New("no FreeMono installed")
+	}
+
+	// Bold
+	pathToBold, err := findFont("FreeMonoBold.ttf")
+
+	if err != nil {
+		return errors.New("no FreeMono Bold installed")
+	}
+
+	// Oblique
+	pathToOblique, err := findFont("FreeMonoOblique.ttf")
+
+	if err != nil {
+		return errors.New("no FreeMono Oblique installed")
+	}
+
+	// Bold oblique
+	pathToBoldOblique, err := findFont("FreeMonoBoldOblique.ttf")
+
+	if err != nil {
+		return errors.New("no FreeMono Bold Oblique installed")
+	}
+
+	// Successfully found FreeMono
+	thisPDF.AddTTFFont("courier", pathToRegular)
+
+	thisPDF.AddTTFFontWithOption("courier", pathToBold,
+		gopdf.TtfOption{
+			Style: gopdf.Bold,
+		})
+
+	thisPDF.AddTTFFontWithOption("courier", pathToOblique,
+		gopdf.TtfOption{
+			Style: gopdf.Italic,
+		})
+
+	thisPDF.AddTTFFontWithOption("courier", pathToBoldOblique,
 		gopdf.TtfOption{
 			Style: gopdf.Italic | gopdf.Bold,
 		})
