@@ -34,7 +34,7 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 	writeText(`<div class="`+styleFile+` play">`+"\n", writer)
 	indent++
 
-	for _, element := range script.Elements {
+	for idx, element := range script.Elements {
 		switch element := element.(type) {
 		case ast.Action:
 			writeText(`<div class="action">`+"\n", writer)
@@ -200,8 +200,11 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 			writeText("</div>\n", writer)
 
 		case ast.BeginAct:
-			// Acts start on a new page
-			writeString(`<div class="page-break"></div>`+"\n", writer)
+			// Acts start on a new page if it isn't the first element in the play.
+			if idx != 0 {
+				writeString(`<div class="page-break"></div>`+"\n", writer)
+			}
+
 			writeText(`<div class="act">`+"\n", writer)
 			indent++
 			writeLines(element, writer)
