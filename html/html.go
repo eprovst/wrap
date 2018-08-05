@@ -12,7 +12,7 @@ import (
 var AddSceneNumbers = true
 
 // URLToCSS contains the path to the Wraparound (or your) CSS.
-var URLToCSS = "https://cdn.jsdelivr.net/gh/wraparound/css@1.0/"
+var URLToCSS = "https://cdn.jsdelivr.net/gh/wraparound/css@1.1/"
 
 var styles = map[string]string{
 	"screenplay": "screen",
