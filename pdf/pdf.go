@@ -216,8 +216,16 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 
 					// Is there other dual dialogue content?
 					if i+1 < len(section.Lines) {
-						// Yes? Reset Y and do not count the line.
-						thisPDF.SetY(lastY)
+						// Is it one content or two content?
+						switch section.Lines[i+1].Type {
+						case dualCharacterTwo, dualDialogueTwo, dualLyricsTwo, dualParentheticalTwo:
+							// Two content:
+							// Reset Y and do not count the line.
+							thisPDF.SetY(lastY)
+						default:
+							// One content: don't reset Y
+						}
+
 					} else {
 						linesOnPage += 1 + addedLeading
 					}
