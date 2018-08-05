@@ -1,8 +1,6 @@
 package pdf
 
 import (
-	"math"
-
 	"github.com/Wraparound/wrap/ast"
 )
 
@@ -71,7 +69,7 @@ func sectionize(element ast.Element) aSection {
 		// Now add the lines in a intertwined fashion.
 		leftDialogue := element.(ast.DualDialogue).LLines
 		rightDialogue := element.(ast.DualDialogue).RLines
-		for i := 0; i < int(math.Max(float64(len(leftDialogue)), float64(len(rightDialogue)))); i++ {
+		for i := 0; i < max(len(leftDialogue), len(rightDialogue)); i++ {
 			if i < len(leftDialogue) {
 				switch leftDialogue[i].(type) {
 				case ast.Parenthetical:

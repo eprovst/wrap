@@ -1,6 +1,7 @@
 package pdf
 
 import (
+	"math"
 	"strings"
 	"time"
 
@@ -188,62 +189,54 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 			}
 
 		case ast.TDualDialogue:
-			for i, line := range section.Lines {
+			leftY := thisPDF.GetY()
+			leftLines := linesOnPage
+			rightY := thisPDF.GetY()
+			rightLines := linesOnPage
+
+			for _, line := range section.Lines {
 				addedLeading := line.leading()
 
 				switch line.Type {
-				case dualCharacterOne:
-					lastY := thisPDF.GetY()
+				case dualCharacterOne, dualDialogueOne, dualParentheticalOne, dualLyricsOne:
+					thisPDF.SetY(leftY)
 
-					// Add the line.
-					styleLine(line)
-					// Not keeping track of it as we reset the Y,
-					// thus styleLine()
-
-					// As this line is always followed by a second character:
-					thisPDF.SetY(lastY)
-
-				case dualDialogueOne, dualParentheticalOne, dualLyricsOne:
 					// Line doesn't fit on page:
-					if linesOnPage+addedLeading+1 > maxNumOfLines {
+					if leftLines+addedLeading+1 > maxNumOfLines {
 						newPage()
-					}
 
-					lastY := thisPDF.GetY()
+						leftLines = linesOnPage
+						rightY = thisPDF.GetY()
+						rightLines = linesOnPage
+					}
 
 					// Add the line. (styleLine() as we do not want to track it yet)
 					styleLine(line)
 
-					// Is there other dual dialogue content?
-					if i+1 < len(section.Lines) {
-						// Is it one content or two content?
-						switch section.Lines[i+1].Type {
-						case dualCharacterTwo, dualDialogueTwo, dualLyricsTwo, dualParentheticalTwo:
-							// Two content:
-							// Reset Y and do not count the line.
-							thisPDF.SetY(lastY)
-						default:
-							// One content: don't reset Y
-						}
+					leftY = thisPDF.GetY()
 
-					} else {
-						linesOnPage += 1 + addedLeading
-					}
+				case dualCharacterTwo, dualDialogueTwo, dualParentheticalTwo, dualLyricsTwo:
+					thisPDF.SetY(rightY)
 
-				case dualCharacterTwo:
-					// Add the line and keep track of it.
-					addLine(line)
-
-				case dualDialogueTwo, dualParentheticalTwo, dualLyricsTwo:
 					// Line doesn't fit on page:
-					if linesOnPage+addedLeading+1 > maxNumOfLines {
+					if rightLines+addedLeading+1 > maxNumOfLines {
 						newPage()
+
+						leftY = thisPDF.GetY()
+						leftLines = linesOnPage
+						rightLines = linesOnPage
 					}
 
-					// Add the line and keep track of it.
-					addLine(line)
+					// Add the line. (styleLine() as we do not want to track it yet)
+					styleLine(line)
+
+					rightY = thisPDF.GetY()
 				}
 			}
+
+			// Update lines on page and Y
+			linesOnPage = max(leftLines, rightLines)
+			thisPDF.SetY(math.Max(leftY, rightY))
 
 		default:
 			addLines(section.Lines)
