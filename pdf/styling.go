@@ -37,6 +37,7 @@ const (
 	more
 
 	titlePageTitle
+	titlePageSubtitle
 	titlePageCredit
 	titlePageAuthor
 	titlePageSource

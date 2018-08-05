@@ -8,7 +8,7 @@ var screenplay = aTheme{
 		LineLenght:    60,
 	},
 	act: lineStyle{
-		LeadingBefore: 2,
+		LeadingBefore: 0,
 		LineLenght:    35,
 		Indent:        25 * en,
 	},
@@ -100,6 +100,10 @@ var screenplay = aTheme{
 		Indent:        rightMargin - leftMargin,
 		Centered:      true,
 	},
+	titlePageSubtitle: lineStyle{
+		Indent:   rightMargin - leftMargin,
+		Centered: true,
+	},
 	titlePageCredit: lineStyle{
 		LeadingBefore: 1,
 		Indent:        rightMargin - leftMargin,
@@ -119,10 +123,10 @@ var screenplay = aTheme{
 	titlePageRight: lineStyle{
 		LeadingBefore: 2,
 		FlushRight:    true,
-		LineLenght:    60,
+		LineLenght:    30,
 	},
 	titlePageLeft: lineStyle{
 		LeadingBefore: 2,
-		LineLenght:    60,
+		LineLenght:    30,
 	},
 }

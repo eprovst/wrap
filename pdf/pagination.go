@@ -57,6 +57,7 @@ func addTitlePage(script *ast.Script) {
 
 	topPart := []styledLine{}
 	topPart = append(topPart, cellify(script.TitlePage["title"], titlePageTitle)...)
+	topPart = append(topPart, cellify(script.TitlePage["subtitle"], titlePageSubtitle)...)
 	topPart = append(topPart, cellify(script.TitlePage["credit"], titlePageCredit)...)
 	topPart = append(topPart, cellify(authors, titlePageAuthor)...)
 	topPart = append(topPart, cellify(script.TitlePage["source"], titlePageSource)...)
@@ -65,12 +66,15 @@ func addTitlePage(script *ast.Script) {
 	addLines(topPart)
 
 	// Build the lower half of the page
-	lowerPart := []styledLine{}
-	lowerPart = append(lowerPart, cellify(script.TitlePage["draft date"], titlePageRight)...)
-	lowerPart = append(lowerPart, cellify(script.TitlePage["notes"], titlePageRight)...)
-	lowerPart = append(lowerPart, cellify(script.TitlePage["contact"], titlePageRight)...)
-	lowerPart = append(lowerPart, cellify(script.TitlePage["copyright"], titlePageLeft)...)
+	rightLowerPart := []styledLine{}
+	rightLowerPart = append(rightLowerPart, cellify(script.TitlePage["draft date"], titlePageRight)...)
+	rightLowerPart = append(rightLowerPart, cellify(script.TitlePage["notes"], titlePageRight)...)
+	rightLowerPart = append(rightLowerPart, cellify(script.TitlePage["contact"], titlePageRight)...)
+	thisPDF.SetY(pageHeight - float64(getHeight(rightLowerPart))*em - bottomMargin)
+	addLines(rightLowerPart)
 
-	thisPDF.SetY(pageHeight - float64(getHeight(lowerPart))*em - bottomMargin)
-	addLines(lowerPart)
+	leftLowerPart := []styledLine{}
+	leftLowerPart = append(leftLowerPart, cellify(script.TitlePage["copyright"], titlePageLeft)...)
+	thisPDF.SetY(pageHeight - float64(getHeight(leftLowerPart))*em - bottomMargin)
+	addLines(leftLowerPart)
 }
