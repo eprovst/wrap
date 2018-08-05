@@ -3,7 +3,7 @@ Wrap
 
 [![Snap Status](https://build.snapcraft.io/badge/Wraparound/wrap.svg)](https://build.snapcraft.io/user/Wrapround/wrap)
 
-A Fountain import and export tool with some extra's...
+A Fountain/Wrap export tool, with some extras...
 
 ## Overview
 Wrap is an open source command line tool that is able to convert Fountain and Wrap files into a correctly formatted

@@ -49,7 +49,6 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 	// HANDLE METADATA:
 	// Handle play theming
 	richTheme := script.TitlePage["type"]
-	var currentTheme aTheme
 	if len(richTheme) != 0 {
 		currentTheme = themeMap[strings.ToLower(richTheme[0].String())]
 	}

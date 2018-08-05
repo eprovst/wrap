@@ -23,14 +23,14 @@ var pdfCmd = &cobra.Command{
 }
 
 var (
-	pdfNoscenenumbersFlag bool
+	pdfNoSceneNumbersFlag bool
 	useCourierPrime       bool
 	useCourierNew         bool
 	useFreeMono           bool
 )
 
 func init() {
-	pdfCmd.Flags().BoolVarP(&pdfNoscenenumbersFlag, "no-scene-numbers", "s", false, "remove scenenumbers from output")
+	pdfCmd.Flags().BoolVarP(&pdfNoSceneNumbersFlag, "no-scene-numbers", "s", false, "remove scene numbers from output")
 	pdfCmd.Flags().BoolVar(&useCourierPrime, "use-courier-prime", false, "force the usage of Courier Prime")
 	pdfCmd.Flags().BoolVar(&useCourierNew, "use-courier-new", false, "force the usage of Courier New")
 	pdfCmd.Flags().BoolVar(&useFreeMono, "use-freemono", false, "force the usage of GNU FreeMono")
@@ -102,7 +102,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 
 	startExportTime := time.Now()
 
-	if pdfNoscenenumbersFlag {
+	if pdfNoSceneNumbersFlag {
 		pdf.AddSceneNumbers = false
 	}
 

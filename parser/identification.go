@@ -89,7 +89,7 @@ func isBeginAct(line string) bool {
 		return false
 
 	} else if hasPrefixInSlice(line, translation.BeginActTags) {
-		isUppercase(line)
+		return isUppercase(line)
 	}
 
 	return false
