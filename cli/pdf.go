@@ -1,13 +1,8 @@
 package cli
 
 import (
-	"bufio"
 	"errors"
-	"os"
-	"time"
 
-	"github.com/Wraparound/wrap/ast"
-	"github.com/Wraparound/wrap/parser"
 	"github.com/Wraparound/wrap/pdf"
 	"github.com/spf13/cobra"
 )
@@ -39,8 +34,6 @@ func init() {
 }
 
 func pdfRun(cmd *cobra.Command, args []string) {
-	startTime := time.Now()
-
 	// Evaluate font selection
 	if useCourierPrime && useCourierNew || useCourierPrime && useFreeMono || useCourierNew && useFreeMono {
 		// The fonts are mutualy exclusive so throw an error
@@ -61,57 +54,9 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		pdf.SelectedFont = pdf.Auto
 	}
 
-	var (
-		err    error
-		output *os.File
-		script *ast.Script
-	)
-
-	if len(args) == 0 {
-		// Assume Wrap input
-		parser.UseWrapExtensions = true
-
-		script, err = getScriptFromStdin()
-		handle(err)
-
-		// Get the file to use during export.
-		path, err := makeUnique("script", "pdf")
-		handle(err)
-
-		output = getOuput(path, "pdf")
-
-	} else {
-		pathToFile := args[0]
-
-		if isWrapFile(pathToFile) {
-			parser.UseWrapExtensions = true
-		}
-
-		script, err = parser.ParseFile(pathToFile)
-		handle(err)
-
-		// Get the file to use during export.
-		output = getOuput(pathToFile, "pdf")
-	}
-
-	// Make sure to close the stream...
-	defer output.Close()
-
-	// Make a write buffer
-	buffer := bufio.NewWriter(output)
-
-	startExportTime := time.Now()
-
 	if pdfNoSceneNumbersFlag {
 		pdf.AddSceneNumbers = false
 	}
 
-	handle(pdf.WritePDF(script, buffer))
-	handle(buffer.Flush())
-
-	endTime := time.Now()
-
-	if benchmarkFlag {
-		printBenchmarks(startTime, startExportTime, endTime)
-	}
+	export(args, "pdf", pdf.WritePDF)
 }

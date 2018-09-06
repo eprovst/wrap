@@ -1,13 +1,10 @@
 package cli
 
 import (
-	"bufio"
-	"os"
-	"time"
+	"io"
 
 	"github.com/Wraparound/wrap/ast"
 	"github.com/Wraparound/wrap/html"
-	"github.com/Wraparound/wrap/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -34,65 +31,20 @@ func init() {
 }
 
 func htmlRun(cmd *cobra.Command, args []string) {
-	startTime := time.Now()
-
-	var (
-		err    error
-		output *os.File
-		script *ast.Script
-	)
-
-	if len(args) == 0 {
-		// Assume Wrap input
-		parser.UseWrapExtensions = true
-
-		script, err = getScriptFromStdin()
-		handle(err)
-
-		// Get the file to use during export.
-		path, err := makeUnique("script", "html")
-		handle(err)
-
-		output = getOuput(path, "html")
-
-	} else {
-		pathToFile := args[0]
-
-		if isWrapFile(pathToFile) {
-			parser.UseWrapExtensions = true
-		}
-
-		script, err = parser.ParseFile(pathToFile)
-		handle(err)
-
-		// Get the file to use during export.
-		output = getOuput(pathToFile, "html")
-	}
-
-	// Make sure to close the stream...
-	defer output.Close()
-
-	// Make a write buffer
-	buffer := bufio.NewWriter(output)
-
-	startExportTime := time.Now()
-
 	if htmlNoSceneNumbersFlag {
 		html.AddSceneNumbers = false
 	}
 
 	if htmlEmbedableFlag {
-		html.WriteHTML(script, buffer)
+		export(args, "html", func(script *ast.Script, buffer io.Writer) error {
+			html.WriteHTML(script, buffer)
+			return nil
+		})
 
 	} else {
-		html.WriteHTMLPage(script, buffer)
-	}
-
-	handle(buffer.Flush())
-
-	endTime := time.Now()
-
-	if benchmarkFlag {
-		printBenchmarks(startTime, startExportTime, endTime)
+		export(args, "html", func(script *ast.Script, buffer io.Writer) error {
+			html.WriteHTMLPage(script, buffer)
+			return nil
+		})
 	}
 }
