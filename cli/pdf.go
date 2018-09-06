@@ -35,6 +35,8 @@ func init() {
 
 func pdfRun(cmd *cobra.Command, args []string) {
 	// Evaluate font selection
+	pdf.AutoFontSelection = false
+
 	if useCourierPrime && useCourierNew || useCourierPrime && useFreeMono || useCourierNew && useFreeMono {
 		// The fonts are mutualy exclusive so throw an error
 		handle(errors.New("tried to force multiple fonts at the same time"))
@@ -51,7 +53,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 
 	} else {
 		// Else use automatic font selection
-		pdf.SelectedFont = pdf.Auto
+		pdf.AutoFontSelection = true
 	}
 
 	if pdfNoSceneNumbersFlag {
