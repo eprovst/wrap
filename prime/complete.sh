@@ -286,6 +286,8 @@ _wrap_pdf()
     flags_with_completion=()
     flags_completion=()
 
+    flags+=("--font=")
+    local_nonpersistent_flags+=("--font=")
     flags+=("--no-scene-numbers")
     flags+=("-s")
     local_nonpersistent_flags+=("--no-scene-numbers")
