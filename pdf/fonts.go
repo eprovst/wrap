@@ -137,7 +137,7 @@ func loadFont(font Font) error {
 }
 
 func loadFonts() {
-	if AutoFontSelection {
+	if !AutoFontSelection {
 		err := loadFont(SelectedFont)
 
 		if err != nil {
