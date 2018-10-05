@@ -63,12 +63,12 @@ func Parser(input io.Reader) (*ast.Script, error) {
 	Here unnecessary spacing is handled through regex.
 	NOTE: regex is no time concern here as a title page is quite small:
 	no noticable difference.*/
-	if regexp.MustCompile("^\\S.+\\S\\:(\\s.+)?$").MatchString(line) {
+	if regexp.MustCompile("^(\\S+|\\S.+\\S)\\:(\\s.+)?$").MatchString(line) {
 		lastLineBlank = false
 
-		inlineValue := regexp.MustCompile("^(\\S.+\\S)(?:\\:\\s+)(\\S.+\\S)(?:\\s*)$")
-		multiLineKey := regexp.MustCompile("^(\\S.+\\S)(?:\\:\\s*)$")
-		multiLineValue := regexp.MustCompile("^(?:   |\t)(?:\\s*)(\\S.+\\S)(?:\\s*)$")
+		inlineValue := regexp.MustCompile("^(\\S+|\\S.+\\S)(?:\\:\\s+)(\\S+|\\S.+\\S)(?:\\s*)$")
+		multiLineKey := regexp.MustCompile("^(\\S+|\\S.+\\S)(?:\\:\\s*)$")
+		multiLineValue := regexp.MustCompile("^(?:   |\t)(?:\\s*)(\\S+|\\S.+\\S)(?:\\s*)$")
 		//                                         ^ tripple space.
 
 		onlyWhiteSpace := regexp.MustCompile("^\\s*$")
