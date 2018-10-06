@@ -46,6 +46,14 @@ func newPage() {
 }
 
 func addTitlePage(script *ast.Script) {
+	// Is there a title?
+	_, exists := script.TitlePage["title"]
+
+	// No title: no title page
+	if !exists {
+		return
+	}
+
 	// First get the author(s)
 	authors := script.TitlePage["authors"]
 	if len(authors) == 0 || authors[0].Lenght() == 0 {
