@@ -17,9 +17,8 @@ type Translation struct {
 	BeginActTags       []string
 	EndActTags         []string
 
-	More      string
-	Contd     string
-	Continued string
+	More  string
+	Contd string
 }
 
 // All available languages

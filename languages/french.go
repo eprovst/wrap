@@ -27,6 +27,4 @@ var FrenchTranslation = Translation{
 	More: "(PLUS)",
 
 	Contd: "(suite)",
-
-	Continued: "CONTINUÉ:",
 }
