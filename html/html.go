@@ -8,8 +8,8 @@ import (
 	"github.com/Wraparound/wrap/ast"
 )
 
-// AddSceneNumbers makes the export module add scene numbers
-var AddSceneNumbers = true
+// Production makes the export module add scene numbers
+var Production = false
 
 // URLToCSS contains the path to the Wraparound (or your) CSS.
 var URLToCSS = "https://cdn.jsdelivr.net/gh/wraparound/css@1.1/"
@@ -179,13 +179,13 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 			writeString(`<div class="slug">`+"\n", writer)
 			indent++
 
-			if AddSceneNumbers {
+			if Production {
 				writeString(`<span class="scnuml">`+element.SceneNumber+"</span>\n", writer)
 			}
 
 			writeLines(element.Slugline, writer)
 
-			if AddSceneNumbers {
+			if Production {
 				writeString(`<span class="scnumr">`+element.SceneNumber+"</span>\n", writer)
 			}
 

@@ -28,4 +28,6 @@ var GermanTranslation = Translation{
 	More: "(MEHR)",
 
 	Contd: "(fortges.)",
+
+	Continued: "FORTGESETZT",
 }

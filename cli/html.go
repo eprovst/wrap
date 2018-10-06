@@ -19,21 +19,19 @@ var htmlCmd = &cobra.Command{
 }
 
 var (
-	htmlEmbedableFlag      bool
-	htmlNoSceneNumbersFlag bool
+	htmlEmbedableFlag  bool
+	htmlProductionFlag bool
 )
 
 func init() {
 	htmlCmd.Flags().BoolVarP(&htmlEmbedableFlag, "embedable", "e", false, "only output the play itself")
-	htmlCmd.Flags().BoolVarP(&htmlNoSceneNumbersFlag, "no-scene-numbers", "s", false, "remove scene numbers from output")
+	htmlCmd.Flags().BoolVarP(&htmlProductionFlag, "production", "p", false, "remove scene numbers from output")
 
 	WrapCmd.AddCommand(htmlCmd)
 }
 
 func htmlRun(cmd *cobra.Command, args []string) {
-	if htmlNoSceneNumbersFlag {
-		html.AddSceneNumbers = false
-	}
+	html.Production = htmlProductionFlag
 
 	if htmlEmbedableFlag {
 		export(args, "html", func(script *ast.Script, buffer io.Writer) error {

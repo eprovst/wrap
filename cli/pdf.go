@@ -19,15 +19,15 @@ var pdfCmd = &cobra.Command{
 }
 
 var (
-	pdfNoSceneNumbersFlag bool
-	useCourierPrime       bool
-	useCourierNew         bool
-	useFreeMono           bool
-	font                  string
+	pdfProductionFlag bool
+	useCourierPrime   bool
+	useCourierNew     bool
+	useFreeMono       bool
+	font              string
 )
 
 func init() {
-	pdfCmd.Flags().BoolVarP(&pdfNoSceneNumbersFlag, "no-scene-numbers", "s", false, "remove scene numbers from output")
+	pdfCmd.Flags().BoolVarP(&pdfProductionFlag, "production", "p", false, "add scene numbers and other production text")
 	pdfCmd.Flags().BoolVar(&useCourierPrime, "use-courier-prime", false, "force the usage of Courier Prime")
 	pdfCmd.Flags().BoolVar(&useCourierNew, "use-courier-new", false, "force the usage of Courier New")
 	pdfCmd.Flags().BoolVar(&useFreeMono, "use-freemono", false, "force the usage of GNU FreeMono")
@@ -40,8 +40,8 @@ func pdfRun(cmd *cobra.Command, args []string) {
 	// Evaluate font selection
 	pdf.AutoFontSelection = false
 
-	// TODO: Add `font`
-	if useCourierPrime && useCourierNew || useCourierPrime && useFreeMono || useCourierNew && useFreeMono {
+	if (font != "" && atLeastOne(useCourierPrime, useCourierNew, useFreeMono)) ||
+		moreThanOne(useCourierPrime, useCourierNew, useFreeMono) {
 		// The fonts are mutualy exclusive so throw an error
 		handle(errors.New("tried to force multiple fonts at the same time"))
 	}
@@ -82,9 +82,7 @@ func pdfRun(cmd *cobra.Command, args []string) {
 		pdf.AutoFontSelection = true
 	}
 
-	if pdfNoSceneNumbersFlag {
-		pdf.AddSceneNumbers = false
-	}
+	pdf.Production = pdfProductionFlag
 
 	export(args, "pdf", pdf.WritePDF)
 }

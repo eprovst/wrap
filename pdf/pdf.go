@@ -27,8 +27,9 @@ const (
 	maxNumOfChars int     = 60
 )
 
-// AddSceneNumbers makes the export module add scene numbers
-var AddSceneNumbers = true
+// Production makes the export module add scene numbers and other
+// production specific additions
+var Production = true
 
 var currentTheme = screenplay
 var currentTranslation = languages.Default.Translation()
@@ -117,7 +118,7 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 			}
 			// TODO: More pagebreaking stuff...
 
-			if AddSceneNumbers {
+			if Production {
 				// Add scene numbers
 				oldY := thisPDF.GetY()
 				firstLineLeading := section.Lines[0].leading()

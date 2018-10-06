@@ -17,8 +17,9 @@ type Translation struct {
 	BeginActTags       []string
 	EndActTags         []string
 
-	More  string
-	Contd string
+	More      string
+	Contd     string
+	Continued string
 }
 
 // All available languages
@@ -38,7 +39,6 @@ func GetLanguage(alias string) Language {
 	case
 		"english",
 		"american",
-		"canadian", // This is up for debate...
 		"australian":
 
 		return English

@@ -27,4 +27,6 @@ var EnglishTranslation = Translation{
 	More: "(MORE)",
 
 	Contd: "(cont'd)",
+
+	Continued: "CONTINUED:",
 }
