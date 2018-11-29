@@ -107,13 +107,7 @@ __wrap_handle_reply()
     fi
 
     if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
-		if declare -F __wrap_custom_func >/dev/null; then
-			# try command name qualified custom func
-			__wrap_custom_func
-		else
-			# otherwise fall back to unqualified for compatibility
-			declare -F ___custom_func >/dev/null && __custom_func
-		fi
+        declare -F __custom_func >/dev/null && __custom_func
     fi
 
     # available in bash-completion >= 2, not always present on macOS
