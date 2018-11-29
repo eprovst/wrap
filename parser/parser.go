@@ -92,6 +92,8 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					if onlyWhiteSpace.MatchString(line) {
 						if lastLineBlank {
 							// Two blank lines -> end TitlePage
+							titlp[key] = textHandler(value)
+
 							// Prepare a line
 							lastScanSuccessful = scanner.Scan()
 							line = scanner.Text()
