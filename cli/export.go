@@ -139,7 +139,7 @@ func makeUnique(filename string, extension string) (string, error) {
 }
 
 func printBenchmarks(start, startExport, end time.Time) {
-	fmt.Fprintf(os.Stderr, "Parsing:   %d ms\n", startExport.Sub(start)/time.Millisecond)
-	fmt.Fprintf(os.Stderr, "Exporting: %d ms\n", end.Sub(startExport)/time.Millisecond)
-	fmt.Fprintf(os.Stderr, "Total:     %d ms\n", end.Sub(start)/time.Millisecond)
+	fmt.Fprintln(os.Stderr, "Parsing:  ", startExport.Sub(start))
+	fmt.Fprintln(os.Stderr, "Exporting:", end.Sub(startExport))
+	fmt.Fprintln(os.Stderr, "Total:    ", end.Sub(start))
 }

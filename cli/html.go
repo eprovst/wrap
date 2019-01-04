@@ -11,6 +11,7 @@ import (
 // htmlCmd represents the html command
 var htmlCmd = &cobra.Command{
 	Use:              "html [path to input file]",
+	Example:          "  wrap html MyScript.fountain\n  cat OtherScript.wrap | wrap html",
 	Short:            "Export file as an HTML webpage",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,

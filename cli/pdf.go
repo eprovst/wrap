@@ -11,6 +11,7 @@ import (
 // pdfCmd represents the pdf command
 var pdfCmd = &cobra.Command{
 	Use:              "pdf [path to input file]",
+	Example:          "  wrap pdf MyScript.fountain\n  cat OtherScript.wrap | wrap pdf",
 	Short:            "Export file as PDF",
 	Args:             cobra.MaximumNArgs(1),
 	TraverseChildren: true,
