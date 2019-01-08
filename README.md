@@ -1,8 +1,6 @@
 Wrap
 ====
 
-[![Snap Status](https://build.snapcraft.io/badge/Wraparound/wrap.svg)](https://build.snapcraft.io/user/Wrapround/wrap)
-
 A Fountain/Wrap export tool, with some extras...
 
 ## Overview
@@ -17,6 +15,9 @@ All this in a FOSS package that you can use straight from the commandline.
 Learn more [here](https://wraparound.github.io/).
 
 ## Installation
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/wrap)
+
 Wrap is available on Windows, macOS and most major Linux distributions.  
 Download the [latest release](https://github.com/Wraparound/wrap/releases/latest).
 
