@@ -27,5 +27,5 @@ var DutchTranslation = Translation{
 
 	More: "(MEER)",
 
-	Contd: "(verder)",
+	Contd: "(VERDER)",
 }

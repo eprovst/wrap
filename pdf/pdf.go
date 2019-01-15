@@ -175,7 +175,7 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 						tmpLine := lastCharacterLine
 						// Only add (cont'd) tag when not yet pressent:
 						if !strings.HasSuffix(strings.ToLower(strings.TrimSpace(
-							tmpLine.Content[len(tmpLine.Content)-1].Content)), currentTranslation.Contd) {
+							tmpLine.Content[len(tmpLine.Content)-1].Content)), strings.ToLower(currentTranslation.Contd)) {
 							tmpLine.Content = append(tmpLine.Content, ast.Cell{
 								Content: " " + currentTranslation.Contd,
 							})

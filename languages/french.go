@@ -26,5 +26,5 @@ var FrenchTranslation = Translation{
 
 	More: "(PLUS)",
 
-	Contd: "(suite)",
+	Contd: "(SUITE)",
 }

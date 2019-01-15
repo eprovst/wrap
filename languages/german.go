@@ -27,5 +27,5 @@ var GermanTranslation = Translation{
 
 	More: "(MEHR)",
 
-	Contd: "(fortges.)",
+	Contd: "(FORTGES.)",
 }

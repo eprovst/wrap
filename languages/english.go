@@ -26,5 +26,5 @@ var EnglishTranslation = Translation{
 
 	More: "(MORE)",
 
-	Contd: "(cont'd)",
+	Contd: "(CONT'D)",
 }
