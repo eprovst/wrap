@@ -59,6 +59,17 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 		currentTheme = screenplay
 	}
 
+	// Handle custom CONT'D and MORE tags
+	richContd := script.TitlePage["contdtag"]
+	if len(richContd) != 0 {
+		currentTranslation.Contd = richContd[0].String()
+	}
+
+	richMore := script.TitlePage["moretag"]
+	if len(richMore) != 0 {
+		currentTranslation.More = richMore[0].String()
+	}
+
 	// Clean up title
 	title := ast.LinesToString(script.TitlePage["title"])
 	title = strings.Replace(title, "\n", " ", -1)
