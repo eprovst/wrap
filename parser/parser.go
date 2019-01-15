@@ -145,12 +145,22 @@ func Parser(input io.Reader) (*ast.Script, error) {
 	// All metadata is collected, now set the used language.
 	richLanguage := titlp["language"]
 
-	if UseWrapExtensions && len(richLanguage) != 0 {
-		language = languages.GetLanguage(richLanguage[0].String())
+	// scriptLanguage is the language used by output, `language`
+	// is the one used by the parser.
+	var scriptLanguage languages.Language
+
+	if len(richLanguage) != 0 {
+		scriptLanguage = languages.GetLanguage(richLanguage[0].String())
+
+		// Use the given language for parsing too
+		if UseWrapExtensions {
+			language = scriptLanguage
+		}
 
 	} else {
 		/* If we're not using the Wrap extensions the language
 		is made the default, the global could be changed already. */
+		scriptLanguage = languages.Default
 		language = languages.Default
 	}
 
@@ -449,7 +459,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 
 	// Finaly bring everything together in an ast.Script
 	tree := ast.Script{
-		Language:  language,
+		Language:  scriptLanguage,
 		TitlePage: titlp,
 		Elements:  elems,
 	}
