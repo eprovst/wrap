@@ -146,22 +146,19 @@ func Parser(input io.Reader) (*ast.Script, error) {
 	richLanguage := titlp["language"]
 
 	// scriptLanguage is the language used by output, `language`
-	// is the one used by the parser.
-	var scriptLanguage languages.Language
+	// is the one used by the parser. We reset them to their default values.
+	scriptLanguage := languages.Default
+	language = languages.Default
 
+	// Has the user given a different language?
 	if len(richLanguage) != 0 {
 		scriptLanguage = languages.GetLanguage(richLanguage[0].String())
 
 		// Use the given language for parsing too
+		// if we're using the Wrap extentions
 		if UseWrapExtensions {
 			language = scriptLanguage
 		}
-
-	} else {
-		/* If we're not using the Wrap extensions the language
-		is made the default, the global could be changed already. */
-		scriptLanguage = languages.Default
-		language = languages.Default
 	}
 
 	// Get the translation of the current language
