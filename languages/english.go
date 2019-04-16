@@ -5,23 +5,24 @@ var EnglishTranslation = Translation{
 	Language: English,
 
 	SceneTags: []string{
-		"int", "ext", "est", "int./ext", "int/ext", "i/e",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
+		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
 	},
 
 	StageplaySceneTags: []string{
-		"scene",
+		"scene ",
 	},
 
 	TransitionTags: []string{
-		"TO:",
+		" TO:",
 	},
 
 	BeginActTags: []string{
-		"ACT",
+		"ACT ",
 	},
 
 	EndActTags: []string{
-		"END OF ACT",
+		"END OF ACT ",
 	},
 
 	More: "(MORE)",

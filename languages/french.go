@@ -5,23 +5,24 @@ var FrenchTranslation = Translation{
 	Language: French,
 
 	SceneTags: []string{
-		"int", "ext", "est", "int./ext", "int/ext", "i/e",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
+		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
 	},
 
 	StageplaySceneTags: []string{
-		"scene", "scène",
+		"scene ", "scène ",
 	},
 
 	TransitionTags: []string{
-		"TO:", "A:", "À:",
+		" TO:", " A:", " À:",
 	},
 
 	BeginActTags: []string{
-		"ACTE",
+		"ACTE ",
 	},
 
 	EndActTags: []string{
-		"FIN D'ACTE", "FIN D' ACTE",
+		"FIN D'ACTE ", "FIN D' ACTE ",
 	},
 
 	More: "(PLUS)",

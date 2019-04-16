@@ -5,24 +5,26 @@ var GermanTranslation = Translation{
 	Language: German,
 
 	SceneTags: []string{
-		"int", "ext", "est", "int./ext", "int/ext", "i/e",
-		"etabl",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
+		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
+		"etabl ",
+		"etabl. ",
 	},
 
 	StageplaySceneTags: []string{
-		"szene",
+		"szene ",
 	},
 
 	TransitionTags: []string{
-		"TO:", "ZU:",
+		" TO:", " ZU:",
 	},
 
 	BeginActTags: []string{
-		"AKT",
+		"AKT ",
 	},
 
 	EndActTags: []string{
-		"ENDE DES AKTS", "ENDE DES AKTES",
+		"ENDE DES AKTS ", "ENDE DES AKTES ",
 	},
 
 	More: "(MEHR)",
