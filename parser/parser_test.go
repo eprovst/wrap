@@ -7,12 +7,9 @@ import (
 	"github.com/Wraparound/wrap/ast"
 )
 
-const debug = false
+const debug = true
 
 func assertMatch(t *testing.T, script string, goal *ast.Script) {
-	if debug {
-		fmt.Printf("GOAL:\n%#v\n", goal)
-	}
 
 	parsed, err := ParseString(script)
 
@@ -21,12 +18,13 @@ func assertMatch(t *testing.T, script string, goal *ast.Script) {
 		return
 	}
 
-	if debug {
-		fmt.Printf("\nPARSED:\n%#v\n", parsed)
-	}
-
 	if !parsed.Equals(goal) {
 		t.Error("Input did not match output.")
+
+		if debug {
+			fmt.Printf("GOAL:\n%#v\n", goal)
+			fmt.Printf("\nPARSED:\n%#v\n", parsed)
+		}
 	}
 }
 
@@ -78,8 +76,172 @@ Boneyard.
 This is an /* internal */ boneyard.`
 
 	output := scriptFromElements([]ast.Element{
-		ast.Action(textHandler([]string{"A line of action.", ""})),
+		ast.Action(textHandler([]string{"A line of action.", ""})), // Why aren't these merged?
 		ast.Action(textHandler([]string{"This is an  boneyard."})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestCenteredText(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `> Centered <
+
+> Not centered
+
+>No space<
+
+> Lots of Space <`
+
+	output := scriptFromElements([]ast.Element{
+		ast.CenteredText(textHandler([]string{"Centered", ""})), // Odd empty line?
+		ast.Transition(textHandler([]string{"Not centered"})),
+		ast.CenteredText(textHandler([]string{"No space", "",
+			"Lots of Space"})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestDialogue(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `ADAM
+I like to write.
+
+EVE (O.S.)
+What kind of writing?
+
+ADAM
+(nervous)
+Screenwriting.
+
+EVE
+ME TOO!
+
+EVE (cont'd)
+I think screenwriting is the best.
+
+ADAM
+That's great.
+I was really worried you wouldn't
+like screenwriting.
+
+EVE
+Oh, Adam.
+(kissing him)
+
+ADAM
+I love you.
+
+EVE ^
+You're so stupid.
+
+R2D2
+Bleep Boop.
+(*This is a valid character cue.*)
+
+23 (O.S.)
+Character name must include a letter
+
+ADAM
+That was really weird.
+I can be weird to. Here's
+a space in the dialogue
+block
+  
+for absolutely no good
+reason.
+
+		EVE
+	  (feeling cocky)
+Well, then I'll just indent!`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Dialogue{
+			Character: textHandler([]string{"ADAM"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"I like to write."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"EVE (O.S.)"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"What kind of writing?"})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"ADAM"}),
+			Lines: []ast.Element{
+				ast.Parenthetical(textHandler([]string{"(nervous)"})),
+				ast.Speech(textHandler([]string{"Screenwriting."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"EVE"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"ME TOO!"})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"EVE (cont'd)"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{
+					"I think screenwriting is the best."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"ADAM"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"That's great.",
+					"I was really worried you wouldn't",
+					"like screenwriting."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"EVE"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"Oh, Adam."})),
+				ast.Parenthetical(textHandler([]string{"(kissing him)"})),
+			},
+		},
+		ast.DualDialogue{
+			LCharacter: textHandler([]string{"ADAM"}),
+			LLines: []ast.Element{
+				ast.Speech(textHandler([]string{"I love you."})),
+			},
+			RCharacter: textHandler([]string{"EVE"}),
+			RLines: []ast.Element{
+				ast.Speech(textHandler([]string{"You're so stupid."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"R2D2"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"Bleep Boop."})),
+				ast.Parenthetical(textHandler([]string{
+					"(*This is a valid character cue.*)"})),
+			},
+		},
+		ast.Action(textHandler([]string{"23 (O.S.)",
+			"Character name must include a letter", ""})), // <-- This empty line is odd?
+		ast.Dialogue{
+			Character: textHandler([]string{"ADAM"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"That was really weird.",
+					"I can be weird to. Here's", "a space in the dialogue",
+					"block", "", "for absolutely no good", "reason."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"EVE"}),
+			Lines: []ast.Element{
+				ast.Parenthetical(textHandler([]string{"(feeling cocky)"})),
+				ast.Speech(textHandler([]string{
+					"Well, then I'll just indent!"})),
+			},
+		},
 	})
 
 	assertMatch(t, input, output)

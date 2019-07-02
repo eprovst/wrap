@@ -140,6 +140,27 @@ func isUppercaseIgnoringCharacterExtensions(line string) bool {
 
 	return true
 }
+func containsLetterIgnoringCharacterExtensions(line string) bool {
+	// NOTE: We do not check if the brackets actually close
+	// we would need a second loop for that and the spec doesn't
+	// say the brackets *have* to be balanced...
+
+	inCharacterExtension := false
+
+	for _, c := range []rune(line) {
+		if c == '(' {
+			inCharacterExtension = true
+
+		} else if c == ')' {
+			inCharacterExtension = false
+
+		} else if !inCharacterExtension && unicode.IsLetter(c) {
+			return true
+		}
+	}
+
+	return false
+}
 
 func isCharacter(line string) bool {
 	line = normaliseLine(line)
@@ -154,7 +175,8 @@ func isCharacter(line string) bool {
 		line = strings.TrimPrefix(line, "Mac")
 	}
 
-	return isUppercaseIgnoringCharacterExtensions(line) && containsLetter(line)
+	return isUppercaseIgnoringCharacterExtensions(line) &&
+		containsLetterIgnoringCharacterExtensions(line)
 }
 
 func isForcedCharacter(line string) bool {
