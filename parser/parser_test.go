@@ -34,7 +34,7 @@ func scriptFromElements(elements []ast.Element) *ast.Script {
 	}
 }
 
-/* FOUNTAIN MODE TEST */
+/* FOUNTAIN MODE TESTS */
 
 /* Many of the tests in this section are based on the ones by Nima Yousefi and
    John August, what follows is the license notice of their tests.
@@ -242,6 +242,116 @@ Well, then I'll just indent!`
 					"Well, then I'll just indent!"})),
 			},
 		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestDualDialogue(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `ADAM
+Yes.
+
+EVE ^
+No.`
+
+	output := scriptFromElements([]ast.Element{
+		ast.DualDialogue{
+			LCharacter: textHandler([]string{"ADAM"}),
+			LLines: []ast.Element{
+				ast.Speech(textHandler([]string{"Yes."})),
+			},
+			RCharacter: textHandler([]string{"EVE"}),
+			RLines: []ast.Element{
+				ast.Speech(textHandler([]string{"No."})),
+			},
+		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestForced(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `!BANG
+BANG
+BANG
+
+@McDUCK
+I'm vegan.
+
+SINGER
+~These are the songs
+~That I sing.`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Action(textHandler([]string{"BANG", "BANG", "BANG", ""})),
+		ast.Dialogue{
+			Character: textHandler([]string{"McDUCK"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{"I'm vegan."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"SINGER"}),
+			Lines: []ast.Element{
+				ast.Lyrics(textHandler([]string{"These are the songs",
+					"That I sing."})),
+			},
+		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestIndenting(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `                CUT TO:
+
+INT. GARAGE - DAY
+
+BRICK and STEEL get into Mom's PORSCHE, Steel at the wheel.  They
+pause for a beat, the gravity of the situation catching up with
+them.
+
+            BRICK
+    This is everybody we've ever put away.
+
+            STEEL
+        (starting the engine)
+    So much for retirement!
+
+They speed off. To destiny!`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Transition(textHandler([]string{"CUT TO:"})),
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. GARAGE - DAY"}),
+			SceneNumber: "1",
+		},
+		ast.Action(textHandler([]string{
+			"BRICK and STEEL get into Mom's PORSCHE, Steel at the wheel.  They",
+			"pause for a beat, the gravity of the situation catching up with",
+			"them.", ""})), // Again, stray newline?
+		ast.Dialogue{
+			Character: textHandler([]string{"BRICK"}),
+			Lines: []ast.Element{
+				ast.Speech(textHandler([]string{
+					"This is everybody we've ever put away."})),
+			},
+		},
+		ast.Dialogue{
+			Character: textHandler([]string{"STEEL"}),
+			Lines: []ast.Element{
+				ast.Parenthetical(textHandler([]string{
+					"(starting the engine)"})),
+				ast.Speech(textHandler([]string{"So much for retirement!"})),
+			},
+		},
+		ast.Action(textHandler([]string{"They speed off. To destiny!"})),
 	})
 
 	assertMatch(t, input, output)

@@ -77,7 +77,9 @@ func categoriser(line string) categorisedLine {
 		isForced = true
 		lineType = sceneTag
 
-	// transitionTag is handled later on
+	case transitionTag:
+		line = normaliseLine(line)
+
 	case forcedTransitionTag:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, ">")
