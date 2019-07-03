@@ -23,7 +23,7 @@ addons:
       - nsis
 
 before_deploy:
-  - TRAVIS_TAG=$(git tag | tail -n 1)
+  - export TRAVIS_TAG=$(git tag | tail -n 1)
 
 deploy:
   provider: releases
@@ -32,4 +32,4 @@ deploy:
   overwrite: true
   skip_cleanup: true
   on:
-    tags: true
+      branch: master
