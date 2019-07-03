@@ -67,7 +67,7 @@ func TestCenteredText(t *testing.T) {
 > Lots of Space <`
 
 	output := scriptFromElements([]ast.Element{
-		ast.CenteredText(textHandler([]string{"Centered", ""})), // Odd empty line?
+		ast.CenteredText(textHandler([]string{"Centered"})),
 		ast.Transition(textHandler([]string{"Not centered"})),
 		ast.CenteredText(textHandler([]string{"No space", "",
 			"Lots of Space"})),
@@ -197,7 +197,7 @@ Well, then I'll just indent!`
 			},
 		},
 		ast.Action(textHandler([]string{"23 (O.S.)",
-			"Character name must include a letter", ""})), // <-- This empty line is odd?
+			"Character name must include a letter"})),
 		ast.Dialogue{
 			Character: textHandler([]string{"ADAM"}),
 			Lines: []ast.Element{
@@ -259,7 +259,7 @@ SINGER
 ~That I sing.`
 
 	output := scriptFromElements([]ast.Element{
-		ast.Action(textHandler([]string{"BANG", "BANG", "BANG", ""})),
+		ast.Action(textHandler([]string{"BANG", "BANG", "BANG"})),
 		ast.Dialogue{
 			Character: textHandler([]string{"McDUCK"}),
 			Lines: []ast.Element{
@@ -307,7 +307,7 @@ They speed off. To destiny!`
 		ast.Action(textHandler([]string{
 			"BRICK and STEEL get into Mom's PORSCHE, Steel at the wheel.  They",
 			"pause for a beat, the gravity of the situation catching up with",
-			"them.", ""})), // Again, stray newline?
+			"them."})),
 		ast.Dialogue{
 			Character: textHandler([]string{"BRICK"}),
 			Lines: []ast.Element{
@@ -324,6 +324,56 @@ They speed off. To destiny!`
 			},
 		},
 		ast.Action(textHandler([]string{"They speed off. To destiny!"})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestMultilineAction(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `A normal line of action.
+
+This is a multi-line block of Action.
+Made famous by the great
+WALTER HILL
+but used by many other writers.
+
+A normal line of action.`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Action(textHandler([]string{
+			"A normal line of action.",
+			"",
+			"This is a multi-line block of Action.",
+			"Made famous by the great",
+			"WALTER HILL",
+			"but used by many other writers.",
+			"",
+			"A normal line of action."})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestNoteSections(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `A line.
+
+[[A note.]]
+
+[[This line spans
+  multiple lines.]]
+
+This is an [[internal]] note.`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Action(textHandler([]string{"A line."})),
+		ast.Note(textHandler([]string{"[[A note.]]"})),
+		ast.Action(textHandler([]string{"[[This line spans", // <-- BUG
+			"  multiple lines.]]", "", // <-- BUG
+			"This is an [[internal]] note."})),
 	})
 
 	assertMatch(t, input, output)

@@ -29,7 +29,7 @@ func writeLines(lines []ast.Line, out io.Writer) {
 	for i, line := range lines {
 		writeLine(line, out)
 
-		if i != len(lines)-1 {
+		if i != len(lines)-1 || line.Empty() {
 			out.Write([]byte("<br>"))
 		}
 

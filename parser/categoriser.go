@@ -11,7 +11,9 @@ func categoriser(line string) categorisedLine {
 	case emptyLine:
 		line = ""
 
-	// beginAct is handled later on
+	case beginAct:
+		line = normaliseLine(line)
+
 	case forcedBeginAct:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, "%")
@@ -25,7 +27,9 @@ func categoriser(line string) categorisedLine {
 		line = strings.TrimSuffix(line, "<")
 		line = strings.TrimSpace(line)
 
-	// character is handled later on
+	case character:
+		line = normaliseLine(line)
+
 	case forcedCharacter:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, "@")
@@ -33,7 +37,9 @@ func categoriser(line string) categorisedLine {
 		isForced = true
 		lineType = character
 
-	// characterTwo is handled later on
+	case characterTwo:
+		line = normaliseLine(line)
+
 	case forcedCharacterTwo:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, "@")
@@ -42,7 +48,9 @@ func categoriser(line string) categorisedLine {
 		isForced = true
 		lineType = characterTwo
 
-	// endAct is handled later on
+	case endAct:
+		line = normaliseLine(line)
+
 	case forcedEndAct:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, "%!")
@@ -66,10 +74,13 @@ func categoriser(line string) categorisedLine {
 		line = ""
 
 	case parenthetical:
+		line = normaliseLine(line)
 		// A parenthetical is detected by the dialogue grouper.
 		lineType = other
 
-	// sceneTag is handled later on
+	case sceneTag:
+		line = normaliseLine(line)
+
 	case forcedSceneTag:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, ".")

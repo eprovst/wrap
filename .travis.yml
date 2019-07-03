@@ -1,30 +1,24 @@
 language: go
-
 go:
-  - 1.x
-
+- 1.x
 go_import_path: github.com/Wraparound/wrap
-
 env:
+  matrix:
   - GO111MODULE=on
-
+  global:
+    secure: VyBsh4rW7hG8+34uv/OvHKdsl5lpmoIbY756+N1sduV3iDjdmAOa+IyqEd1+ax7nkBFrAPbA5iebsCvr7az7DJObcLrTn+Un8ouMFeIgnKlZ+q/ZaDtAMJHdKa7qKwUrDD3l1qQMw2oKmDZMNSnaGjvnG1AvWUhnLgP7+jeHOrJvzA+lUO6CrTUqZabxA6L1p2NWHakaK8i0GegeczNaKdA8Hcip6HBrt5sCBj5sdnHAr+iQjg5dtoFSfqCQ2OnusRsRSvMO3ccQe4CKxZA3+rnzbivN1xOM1g65Qo4RTG5Ed/5mV6eTiELUwANS4FMFPn6hoBJRvLVYZXTKxQPBKTQGbD71NDGD8lm8IMdutv+rbJLtlqE51LJ3/a0pgT9LFt4/xtD4tZsYdDKemQp7Wrl7GlqdPLe0EEiroI8w+ISE7p8AuitvIaZsxg6XI+b9qFRF0zbh6+L1I7F9gruZJ3vwRITGjzVikRlzhA9DN3cpGUNP2WoyVHJLfYrEc96FaNwCb1KSot4ljafewW7zvTFfOGSljGKWVEBrxH1fzHyW1brx1ClrNyohSDU75szOumyGVGO1sCp7gXISmCzGXAM+lDjJinybp+GaZMGDW5fs13m3hGFR2P2J062rlP1b7B4GYevmXqQVTSbyhGoSzzUXjPQkfiFQRxRIiAFppGA=
 before_install:
-  - go get -v github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-
+- go get -v github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 script:
-  - make test
-  - make nightlies
-
+- make test
+- make nightlies
 dist: xenial
-
 addons:
   apt:
     packages:
-      - nsis
-
+    - nsis
 before_deploy:
-  - export TRAVIS_TAG=$(git tag | tail -n 1)
-
+- export TRAVIS_TAG=$(git tag | tail -n 1)
 deploy:
   provider: releases
   file_glob: true
@@ -32,4 +26,4 @@ deploy:
   overwrite: true
   skip_cleanup: true
   on:
-      branch: master
+    branch: master

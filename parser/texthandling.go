@@ -43,7 +43,7 @@ func textHandler(lines []string) []ast.Line {
 	insertPs := []insertionPoint{}
 	nowComment := false
 
-	for _, line := range lines {
+	for n, line := range lines {
 		// Details of amount of spaces are handled by Parser()
 		if line == "" {
 			nowComment = false
@@ -62,7 +62,7 @@ func textHandler(lines []string) []ast.Line {
 		}
 
 		// Replace tab by four spaces
-		line = strings.Replace(line, "\t", strings.Repeat(" ", 4), -1)
+		lines[n] = strings.Replace(line, "\t", strings.Repeat(" ", 4), -1)
 
 		// Search for insert points.
 		for i := 0; i < len(line); i++ {
@@ -419,6 +419,13 @@ func textHandler(lines []string) []ast.Line {
 			}
 		}
 	}
+
+	// Remove trailing empty lines
+	i := len(insertPs)
+	for i > 0 && insertPs[i-1].Kind == emptyline {
+		i--
+	}
+	insertPs = insertPs[:i]
 
 	// Start writing
 	endResult := []ast.Line{}
