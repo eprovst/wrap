@@ -20,7 +20,7 @@ const (
 	TCenteredText
 	TPageBreak
 	TSection
-	TSynopse
+	TSynopsis
 	TNote
 	TNone
 )
@@ -51,8 +51,8 @@ func GetElementType(elem Element) ElementType {
 		return TPageBreak
 	case Section:
 		return TSection
-	case Synopse:
-		return TSynopse
+	case Synopsis:
+		return TSynopsis
 	case Note:
 		return TNote
 	default:

@@ -5,8 +5,8 @@ var FrenchTranslation = Translation{
 	Language: French,
 
 	SceneTags: []string{
-		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
-		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ", "i./e ",
+		"int.", "ext.", "est.", "int./ext.", "int/ext.", "i/e.", "i./e.",
 	},
 
 	StageplaySceneTags: []string{

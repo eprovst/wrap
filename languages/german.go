@@ -5,10 +5,10 @@ var GermanTranslation = Translation{
 	Language: German,
 
 	SceneTags: []string{
-		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
-		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ", "i./e ",
+		"int.", "ext.", "est.", "int./ext.", "int/ext.", "i/e.", "i./e.",
 		"etabl ",
-		"etabl. ",
+		"etabl.",
 	},
 
 	StageplaySceneTags: []string{

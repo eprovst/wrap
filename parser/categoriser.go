@@ -101,7 +101,7 @@ func categoriser(line string) categorisedLine {
 	case section:
 		line = normaliseLine(line)
 
-	case synopse:
+	case synopsis:
 		line = normaliseLine(line)
 		line = strings.TrimPrefix(line, "=")
 		line = strings.TrimSpace(line)

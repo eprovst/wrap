@@ -5,10 +5,10 @@ var DutchTranslation = Translation{
 	Language: Dutch,
 
 	SceneTags: []string{
-		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ",
-		"int. ", "ext. ", "est. ", "int./ext. ", "int/ext. ", "i/e. ",
+		"int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ", "i./e ",
+		"int.", "ext.", "est.", "int./ext.", "int/ext.", "i/e.", "i./e.",
 		"bin ", "bui ", "bin./bui ", "open ", "bin/bui ", "bi/bu ",
-		"bin. ", "bui. ", "bin./bui. ", "open. ", "bin/bui. ", "bi/bu. ",
+		"bin.", "bui.", "bin./bui.", "open.", "bin/bui.", "bi/bu.",
 	},
 
 	StageplaySceneTags: []string{

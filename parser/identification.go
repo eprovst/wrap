@@ -64,7 +64,7 @@ func isForcedSceneTag(line string) bool {
 }
 
 func isTransitionTag(line string) bool {
-	line = normaliseLine(line)
+	// The line shouldn't be normalised as it can then for instance end in "TO:  "
 
 	if isForcedAction(line) || isForcedTransitionTag(line) {
 		return false
@@ -257,7 +257,7 @@ func isSection(line string) bool {
 	return strings.HasPrefix(line, "#")
 }
 
-func isSynopse(line string) bool {
+func isSynopsis(line string) bool {
 	line = normaliseLine(line)
 
 	// We do not have to check for a forced normal action as this wouldn't start with '='
@@ -301,7 +301,7 @@ const (
 	parenthetical
 	sceneTag
 	section
-	synopse
+	synopsis
 	transitionTag
 	action = other
 )
@@ -350,8 +350,8 @@ func getLineType(line string) lineCat {
 	} else if isSection(line) {
 		return section
 
-	} else if isSynopse(line) {
-		return synopse
+	} else if isSynopsis(line) {
+		return synopsis
 
 	} else if isLyrics(line) {
 		return lyrics
@@ -383,7 +383,7 @@ func getLineType(line string) lineCat {
 
 func isIgnoredLineType(lineType lineCat) bool {
 	switch lineType {
-	case boneyard, synopse, section, pageBreak, emptyLine:
+	case boneyard, synopsis, section, pageBreak, emptyLine:
 		return true
 
 	default:

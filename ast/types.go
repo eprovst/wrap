@@ -352,14 +352,14 @@ func (section Section) Equals(other Element) bool {
 	}
 }
 
-// Synopse type.
-type Synopse []Line
+// Synopsis type.
+type Synopsis []Line
 
-// Equals checks if an Element is the same Synopse
-func (synopse Synopse) Equals(other Element) bool {
+// Equals checks if an Element is the same Synopsis
+func (synopsis Synopsis) Equals(other Element) bool {
 	switch other := other.(type) {
-	case Synopse:
-		return areLinesEqual(synopse, other)
+	case Synopsis:
+		return areLinesEqual(synopsis, other)
 	default:
 		return false
 	}

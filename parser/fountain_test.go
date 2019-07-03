@@ -378,3 +378,352 @@ This is an [[internal]] note.`
 
 	assertMatch(t, input, output)
 }
+
+func TestPageBreaks(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `Page one.
+
+===
+
+Page two.
+
+=========
+
+Page three.`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Action(textHandler([]string{"Page one."})),
+		ast.PageBreak{},
+		ast.Action(textHandler([]string{"Page two."})),
+		ast.PageBreak{},
+		ast.Action(textHandler([]string{"Page three."})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestSceneHeaders(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `INT. HOUSE - DAY
+
+EXT. HOUSE - DAY
+
+INT HOUSE DAY
+
+EXT HOUSE DAY
+
+INT/EXT. HOUSE - DAY
+
+INT./EXT. HOUSE - DAY
+
+I/E. HOUSE - DAY
+
+I./E. HOUSE - DAY
+
+I/E HOUSE DAY
+
+INT - HOUSE - DAY
+
+EXT - HOUSE - DAY
+
+EST. HOUSE - DAY
+
+EST HOUSE DAY
+
+INT. HOUSE - DAY (1979)
+
+.KITCHEN
+
+... not a scene header.
+
+INT. HOUSE - DAY
+EXT. HOUSE - DAY
+
+ESTABLISHING
+
+int. house - day`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "1",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"EXT. HOUSE - DAY"}),
+			SceneNumber: "2",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT HOUSE DAY"}),
+			SceneNumber: "3",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"EXT HOUSE DAY"}),
+			SceneNumber: "4",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT/EXT. HOUSE - DAY"}),
+			SceneNumber: "5",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT./EXT. HOUSE - DAY"}),
+			SceneNumber: "6",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"I/E. HOUSE - DAY"}),
+			SceneNumber: "7",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"I./E. HOUSE - DAY"}),
+			SceneNumber: "8",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"I/E HOUSE DAY"}),
+			SceneNumber: "9",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT - HOUSE - DAY"}),
+			SceneNumber: "10",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"EXT - HOUSE - DAY"}),
+			SceneNumber: "11",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"EST. HOUSE - DAY"}),
+			SceneNumber: "12",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"EST HOUSE DAY"}),
+			SceneNumber: "13",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY (1979)"}),
+			SceneNumber: "14",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"KITCHEN"}),
+			SceneNumber: "15",
+		},
+		ast.Action(textHandler([]string{
+			"... not a scene header.",
+			"",
+			"INT. HOUSE - DAY",
+			"EXT. HOUSE - DAY",
+			"",
+			"ESTABLISHING",
+			"",
+			"int. house - day",
+		})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestSceneNumbers(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `INT. HOUSE - DAY #1#
+
+INT. HOUSE - DAY #1A#
+
+INT. HOUSE - DAY #1a#
+
+INT. HOUSE - DAY #A1#
+
+INT. HOUSE - DAY #I-1-A#
+
+INT. HOUSE - DAY #1.#
+
+INT. HOUSE - DAY - FLASHBACK (1944) #110A#
+
+` // <-- Has to be followed by an empty line
+
+	output := scriptFromElements([]ast.Element{
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "1",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "1A",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "1a",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "A1",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "I-1-A",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. HOUSE - DAY"}),
+			SceneNumber: "1.",
+		},
+		ast.Scene{
+			Slugline: textHandler([]string{
+				"INT. HOUSE - DAY - FLASHBACK (1944)",
+			}),
+			SceneNumber: "110A",
+		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestSections(t *testing.T) {
+	UseWrapExtensions = false
+	input := `# Act One
+
+#Act Two
+
+#ACT THREE
+
+# ACT FOUR
+
+# 5
+
+## Level 2
+
+### Level 3`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Section{
+			Line:  textHandler([]string{"Act One"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"Act Two"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"ACT THREE"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"ACT FOUR"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"5"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"Level 2"}),
+			Level: 2,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"Level 3"}),
+			Level: 3,
+		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestComplexSection(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `# Act 1
+= Synopsis 1
+
+INT. LOCATION - DAY
+
+# Act 2
+## Sequence 1`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Section{
+			Line:  textHandler([]string{"Act 1"}),
+			Level: 1,
+		},
+		ast.Synopsis(textHandler([]string{"Synopsis 1"})),
+		ast.Scene{
+			Slugline:    textHandler([]string{"INT. LOCATION - DAY"}),
+			SceneNumber: "1",
+		},
+		ast.Section{
+			Line:  textHandler([]string{"Act 2"}),
+			Level: 1,
+		},
+		ast.Section{
+			Line:  textHandler([]string{"Sequence 1"}),
+			Level: 2,
+		},
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestSynopsis(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `# Act One
+
+= This is the first act.
+
+# Act Two
+
+=This is another act.
+
+# Act Three
+
+=THE FINAL ACT`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Section{
+			Line:  textHandler([]string{"Act One"}),
+			Level: 1,
+		},
+		ast.Synopsis(textHandler([]string{"This is the first act."})),
+		ast.Section{
+			Line:  textHandler([]string{"Act Two"}),
+			Level: 1,
+		},
+		ast.Synopsis(textHandler([]string{"This is another act."})),
+		ast.Section{
+			Line:  textHandler([]string{"Act Three"}),
+			Level: 1,
+		},
+		ast.Synopsis(textHandler([]string{"THE FINAL ACT"})),
+	})
+
+	assertMatch(t, input, output)
+}
+
+func TestTransitions(t *testing.T) {
+	UseWrapExtensions = false
+
+	input := `
+
+CUT TO:
+
+SMASH CUT TO:
+
+FADE TO BLACK.
+
+> NOT A STANDARD TRANSITION:
+
+CUT TO:  
+
+GO TO:
+
+TO:`
+
+	output := scriptFromElements([]ast.Element{
+		ast.Transition(textHandler([]string{"CUT TO:"})),
+		ast.Transition(textHandler([]string{"SMASH CUT TO:"})),
+		ast.Action(textHandler([]string{"FADE TO BLACK."})),
+		ast.Transition(textHandler([]string{"NOT A STANDARD TRANSITION:"})),
+		ast.Action(textHandler([]string{"CUT TO:"})),
+		ast.Transition(textHandler([]string{"GO TO:"})),
+		ast.Action(textHandler([]string{"TO:"})),
+	})
+
+	assertMatch(t, input, output)
+}

@@ -198,9 +198,10 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				}
 
 			// Has to be preceded by an empty line.
+			// But not followed by one.
 			case character, characterTwo:
 				if i > 0 && isIgnoredLineType(lines[i-1].Category) &&
-					!(i+1 < len(lines) && isIgnoredLineType(lines[i+1].Category)) {
+					!(i+1 >= len(lines) || isIgnoredLineType(lines[i+1].Category)) {
 
 					// Cleanup of current line
 					lines[i].Line = normaliseLine(lines[i].Line)
@@ -215,7 +216,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					lines[i].Category = action
 				}
 
-			case synopse, section, noteOnOwnLine:
+			case synopsis, section, noteOnOwnLine:
 				// These gobble their surrounding lines.
 				gobbledLines := 0
 
@@ -439,8 +440,8 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				Level: level,
 			})
 
-		case synopse:
-			elems = append(elems, ast.Synopse(textHandler([]string{lines[i].Line})))
+		case synopsis:
+			elems = append(elems, ast.Synopsis(textHandler([]string{lines[i].Line})))
 
 		case beginAct:
 			elems = append(elems, ast.BeginAct(textHandler([]string{lines[i].Line})))
