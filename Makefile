@@ -46,3 +46,13 @@ dist/Wrap_macOS.zip: build/darwin/wrap
 
 .PHONY: all
 all: prime/complete.sh dist/Wrap_Win64.exe dist/Wrap_macOS.zip clean
+
+dist/Wrap_Win64_nightly.exe: dist/Wrap_Win64.exe
+	@mv ./dist/Wrap_Win64.exe ./dist/Wrap_Win64_nightly.exe
+
+dist/Wrap_macOS_nightly.zip: dist/Wrap_macOS.zip
+	@mv ./dist/Wrap_macOS.zip ./dist/Wrap_macOS_nightly.zip
+
+.PHONY: nightlies
+nightlies: prime/complete.sh dist/Wrap_Win64_nightly.exe \
+	dist/Wrap_macOS_nightly.zip clean
