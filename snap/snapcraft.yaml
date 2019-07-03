@@ -5,6 +5,13 @@ description: Wrap is a parser/exporter for the Fountain format which also adds s
 grade: stable
 confinement: strict
 
+parts:
+  wrap-cli:
+    plugin: go
+    go-importpath: github.com/Wraparound/wrap
+    go-packages: [github.com/Wraparound/wrap]
+    go-buildtags: [ldflags '-s -w']
+
 apps:
   wrap:
     command: wrap
@@ -13,10 +20,3 @@ apps:
       - home
       - desktop
       - removable-media
-
-parts:
-  wrap-cli:
-    plugin: go
-    go-importpath: github.com/Wraparound/wrap
-    go-packages: [github.com/Wraparound/wrap]
-    go-buildtags: [ldflags '-s -w']

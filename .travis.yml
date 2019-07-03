@@ -1,0 +1,34 @@
+language: go
+
+go:
+  - 1.6.x
+  - 1.x.x
+
+env:
+  - GO111MODULE=on
+
+before_install:
+  - go get -v github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+
+script:
+  - make test
+  - make nightlies
+
+dist: xenial
+
+addons:
+  apt:
+    packages:
+      - nsis
+
+before_deploy:
+  - TRAVIS_TAG=$(git tag | tail -n 1)
+
+deploy:
+  provider: releases
+  file_glob: true
+  file: dist/*
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
