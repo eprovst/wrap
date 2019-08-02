@@ -216,7 +216,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					lines[i].Category = action
 				}
 
-			case synopsis, section, noteOnOwnLine:
+			case synopsis, section, startOfIndependentNote:
 				// These gobble their surrounding lines.
 				gobbledLines := 0
 
@@ -229,12 +229,6 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				if i+1 < len(lines) && lines[i+1].Category == emptyLine {
 					lines = append(lines[:i+1], lines[i+2:]...)
 					gobbledLines++
-				}
-
-				if lines[i].Category == noteOnOwnLine && gobbledLines != 2 {
-					// If it isn't a true note on one line it didn't gobble it's surrounding lines,
-					// thus it's an action.
-					lines[i].Category = action
 				}
 			}
 		}
@@ -290,7 +284,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		case action:
 			contents := []string{lines[i].Line}
 
-		actionAggregation:
+		actionAggregation: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
 			for i++; i < len(lines); i++ {
 				switch lines[i].Category {
 				case action:
@@ -327,7 +321,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 			charact := lines[i].Line
 			var dialog []ast.Element
 
-		dialogueAggregation:
+		dialogueAggregation: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
 			for i++; i < len(lines); i++ {
 				switch lines[i].Category {
 				case other:
@@ -408,7 +402,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		case centeredText:
 			contents := []string{lines[i].Line}
 
-		centeredTextAggregation:
+		centeredTextAggregation: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
 			for i++; i < len(lines); i++ {
 				switch lines[i].Category {
 				case centeredText:
@@ -449,8 +443,29 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		case endAct:
 			elems = append(elems, ast.EndAct(textHandler([]string{lines[i].Line})))
 
-		case noteOnOwnLine:
-			elems = append(elems, ast.Note(textHandler([]string{lines[i].Line})))
+		case startOfIndependentNote: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
+			contents := []string{}
+			oldI := i
+			for ; i < len(lines); i++ {
+				if lines[i].Category != emptyLine && !strings.Contains(lines[i].Line, "]]") {
+					contents = append(contents, lines[i].Line)
+				} else if strings.HasSuffix(strings.TrimSpace(lines[i].Line), "]]") {
+					contents = append(contents, lines[i].Line)
+					// Gobble empty lines
+					for i+1 < len(lines) && lines[i+1].Category == emptyLine {
+						i++
+					}
+					break
+				} else {
+					lines[oldI].Category = action
+					i = oldI - 1
+					break
+				}
+			}
+
+			if i != oldI-1 {
+				elems = append(elems, ast.Note(textHandler(contents)))
+			}
 		}
 	}
 

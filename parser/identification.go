@@ -223,11 +223,11 @@ func isCenteredText(line string) bool {
 	return strings.HasPrefix(line, ">") && strings.HasSuffix(line, "<")
 }
 
-func isNoteOnOwnLine(line string) bool {
+func isStartOfIndependentNote(line string) bool {
 	line = normaliseLine(line)
 
 	// We do not have to check for a forced normal action as this wouldn't start with '[['
-	return strings.HasPrefix(line, "[[") && strings.HasSuffix(line, "]]")
+	return strings.HasPrefix(line, "[[")
 }
 
 func isPageBreak(line string) bool {
@@ -294,7 +294,7 @@ const (
 	forcedEndAct
 	forcedSceneTag
 	forcedTransitionTag
-	noteOnOwnLine
+	startOfIndependentNote
 	boneyard
 	lyrics
 	pageBreak
@@ -320,8 +320,8 @@ func getLineType(line string) lineCat {
 	} else if isCenteredText(line) {
 		return centeredText
 
-	} else if isNoteOnOwnLine(line) {
-		return noteOnOwnLine
+	} else if isStartOfIndependentNote(line) {
+		return startOfIndependentNote
 
 	} else if isForcedAction(line) {
 		return forcedAction

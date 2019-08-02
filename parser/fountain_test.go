@@ -371,9 +371,9 @@ This is an [[internal]] note.`
 	output := scriptFromElements([]ast.Element{
 		ast.Action(textHandler([]string{"A line."})),
 		ast.Note(textHandler([]string{"[[A note.]]"})),
-		ast.Action(textHandler([]string{"[[This line spans", // <-- BUG
-			"  multiple lines.]]", "", // <-- BUG
-			"This is an [[internal]] note."})),
+		ast.Note(textHandler([]string{"[[This line spans",
+			"  multiple lines.]]"})),
+		ast.Action(textHandler([]string{"This is an [[internal]] note."})),
 	})
 
 	assertMatch(t, input, output)
