@@ -10,8 +10,8 @@ import (
 func wordwrap(line styledLine) []styledLine {
 	lineLenght := currentTheme[line.Type].LineLenght
 
-	// If the line lenght is undefined, change it to a default.
-	if lineLenght == 0 {
+	// If the line lenght is undefined or invalid, change it to a default.
+	if lineLenght <= 1 {
 		lineLenght = maxNumOfChars
 	}
 
@@ -27,13 +27,31 @@ func wordwrap(line styledLine) []styledLine {
 			currentLineContent = append(currentLineContent, cell)
 
 		} else {
-			overflow := currentLineLenght - lineLenght
-			breakoffset := overflow
-			// We use a rune slice to be able to find 'nonbreakingspaces'.
-			cellContent := []rune(cell.Content)
+			// Select breaking parameters
+			var (
+				overflow    int
+				cellContent []rune
+			)
+
+			if cell.Lenght() == 1 {
+				// Very peculiar edge case, backtrack one cell and break that one
+				currentCell--
+				cell = line.Content[currentCell]
+				currentLineContent = currentLineContent[:len(currentLineContent)-1]
+
+				overflow = 1
+				cellContent = []rune(cell.Content)
+
+			} else {
+				overflow = currentLineLenght - lineLenght
+
+				// We use a rune slice to be able to find 'nonbreakingspaces'.
+				cellContent = []rune(cell.Content)
+			}
 
 			// Now split the cell:
 			// Let's look for possible break points:
+			breakoffset := overflow
 			j := overflow
 			for foundbreak := false; !foundbreak &&
 				j < len(cellContent); j++ {
