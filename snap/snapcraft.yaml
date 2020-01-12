@@ -2,6 +2,7 @@ name: wrap
 version: "v0.3.0"
 summary: A Fountain export tool with some extra's...
 description: Wrap is a parser/exporter for the Fountain format which also adds some extensions to said format.
+base: core18
 grade: stable
 confinement: strict
 
