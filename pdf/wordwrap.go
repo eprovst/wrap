@@ -50,7 +50,8 @@ func wordwrap(line styledLine) []styledLine {
 			// Now break the line:
 			firstHalfOfCell := cell
 			hyphenInsterted := false
-			if unicode.IsLetter(cellContent[len(cellContent)-breakoffset-1]) &&
+			if len(cellContent)-breakoffset >= 1 &&
+				unicode.IsLetter(cellContent[len(cellContent)-breakoffset-1]) &&
 				unicode.IsLetter(cellContent[len(cellContent)-breakoffset]) {
 
 				hyphenInsterted = true
