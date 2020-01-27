@@ -1,5 +1,9 @@
-# Wraparound Parser
-This parser transforms a Wrap or Fountain file into a syntax tree which we can use in the export modules.
+# Wrap Parser
+This parser transforms a Wrap or Fountain file into a syntax tree which we can
+use in the export modules.
 
-For more information see the [wiki](https://github.com/Wraparound/wrap/wiki) or if there is a bug you would like to report
-or an idea to suggest you can do that [here](https://github.com/Wraparound/wrap/issues).
+> **WARNING**
+> Ye who enter here. This parser was written at a time when the author was
+> fairly inexperienced with Go. As such it isn't the most readable, maintainable
+> nor elegant code. However it works and is fairly quick. A rewrite is something
+> on the todo list for the very far future.

@@ -24,9 +24,10 @@ type Translation struct {
 // All available languages
 const (
 	English Language = iota
+	Dutch
 	French
 	German
-	Dutch
+	Italian
 )
 
 // Default language is English
@@ -43,6 +44,14 @@ func GetLanguage(alias string) Language {
 		return English
 
 	case
+		"dutch",
+		"flemish",
+		"nederlands",
+		"vlaams":
+
+		return Dutch
+
+	case
 		"french",
 		"francais", // ç is difficult to type on some/most keyboard layouts...
 		"français":
@@ -56,12 +65,10 @@ func GetLanguage(alias string) Language {
 		return German
 
 	case
-		"dutch",
-		"flemish",
-		"nederlands",
-		"vlaams":
+		"italian",
+		"italiano":
 
-		return Dutch
+		return Italian
 
 	default:
 		return Default
@@ -74,14 +81,17 @@ func (lang Language) String() string {
 	case English:
 		return "English"
 
+	case Dutch:
+		return "Dutch"
+
 	case French:
 		return "French"
 
 	case German:
 		return "German"
 
-	case Dutch:
-		return "Dutch"
+	case Italian:
+		return "Italian"
 
 	default:
 		panic("unknown language")
@@ -94,14 +104,17 @@ func (lang Language) Translation() Translation {
 	case English:
 		return EnglishTranslation
 
+	case Dutch:
+		return DutchTranslation
+
 	case French:
 		return FrenchTranslation
 
 	case German:
 		return GermanTranslation
 
-	case Dutch:
-		return DutchTranslation
+	case Italian:
+		return ItalianTranslation
 
 	default:
 		panic("unknown language")

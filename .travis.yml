@@ -11,10 +11,10 @@ script:
 - make test
 - make nightlies
 dist: xenial
-# addons:
-#   apt:
-#     packages:
-#     - nsis
+addons:
+  apt:
+    packages:
+    - nsis
 # before_deploy:
 # - export TRAVIS_TAG=$(git tag | tail -n 1)
 # deploy:
