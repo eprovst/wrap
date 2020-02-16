@@ -222,8 +222,9 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 						rightLines = linesOnPage
 					}
 
-					// Add the line. (styleLine() as we do not want to track it yet)
+					// Add the line. (styleLine() as we do not want to track it globally yet)
 					styleLine(line)
+					leftLines += addedLeading + 1
 
 					leftY = thisPDF.GetY()
 
@@ -239,8 +240,9 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 						rightLines = linesOnPage
 					}
 
-					// Add the line. (styleLine() as we do not want to track it yet)
+					// Add the line. (styleLine() as we do not want to track it globally yet)
 					styleLine(line)
+					rightLines += addedLeading + 1
 
 					rightY = thisPDF.GetY()
 				}
