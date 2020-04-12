@@ -12,10 +12,12 @@ distclean:
 
 # Note: packaging and building for Linux
 #       is done through build.snapcraft.io
-prime/complete.sh:
-	@go run scripts/generate_bashcompletion.go
+
+prime/bash-complete.sh prime/zsh-complete.sh:
+	@go run scripts/generate_completions.go
 	@mkdir -p ./prime
-	@mv ./complete.sh prime/complete.sh
+	@mv ./bash-complete.sh prime/bash-complete.sh
+	@mv ./zsh-complete.sh prime/zsh-complete.sh
 
 build/windows/wrap.exe:
 	@go generate # Prepare resource.syso
@@ -46,7 +48,8 @@ dist/Wrap_macOS.zip: build/darwin/wrap
 	@zip -q -r ./dist/Wrap_macOS.zip ./build/dist/macOS/wrap.app
 
 .PHONY: release
-release: prime/complete.sh dist/Wrap_Win64.exe dist/Wrap_macOS.zip
+release: prime/bash-complete.sh prime/zsh-complete.sh \
+	dist/Wrap_Win64.exe dist/Wrap_macOS.zip
 
 dist/Wrap_Win64_nightly.exe: dist/Wrap_Win64.exe
 	@mv ./dist/Wrap_Win64.exe ./dist/Wrap_Win64_nightly.exe
@@ -55,5 +58,5 @@ dist/Wrap_macOS_nightly.zip: dist/Wrap_macOS.zip
 	@mv ./dist/Wrap_macOS.zip ./dist/Wrap_macOS_nightly.zip
 
 .PHONY: nightlies
-nightlies: prime/complete.sh dist/Wrap_Win64_nightly.exe \
-	dist/Wrap_macOS_nightly.zip
+nightlies: prime/bash-complete.sh prime/zsh-complete.sh \
+	dist/Wrap_Win64_nightly.exe dist/Wrap_macOS_nightly.zip

@@ -16,7 +16,7 @@ parts:
 apps:
   wrap:
     command: wrap
-    completer: complete.sh
+    completer: bash-complete.sh
     plugs:
       - home
       - desktop
