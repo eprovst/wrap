@@ -24,6 +24,7 @@ var (
 	useCourierPrime   bool
 	useCourierNew     bool
 	useFreeMono       bool
+	pageSize          string
 	font              string
 )
 
@@ -32,6 +33,10 @@ func init() {
 	pdfCmd.Flags().BoolVar(&useCourierPrime, "use-courier-prime", false, "force the usage of Courier Prime")
 	pdfCmd.Flags().BoolVar(&useCourierNew, "use-courier-new", false, "force the usage of Courier New")
 	pdfCmd.Flags().BoolVar(&useFreeMono, "use-freemono", false, "force the usage of GNU FreeMono")
+	pdfCmd.Flags().StringVar(&pageSize, "page-size", "", "choose page size (letter or a4)")
+	pdfCmd.RegisterFlagCompletionFunc("page-size", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{"letter", "a4"}, cobra.ShellCompDirectiveDefault
+	})
 	pdfCmd.Flags().StringVar(&font, "font", "", "provide font as \"regular.ext, bold.ext, italic.ext, bolditalic.ext\"")
 
 	WrapCmd.AddCommand(pdfCmd)
@@ -84,6 +89,10 @@ func pdfRun(cmd *cobra.Command, args []string) {
 	}
 
 	pdf.Production = pdfProductionFlag
+
+	if pageSize != "" {
+		pdf.PageSize = pageSize
+	}
 
 	export(args, "pdf", pdf.WritePDF)
 }

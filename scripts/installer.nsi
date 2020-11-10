@@ -1,5 +1,7 @@
 ; This is a temporary solution, until WiX support is better on Linux.
 
+Unicode True
+
 !define Name "Wrap"
 Name "${Name}"
 Outfile "../dist/${Name}_Win64.exe"

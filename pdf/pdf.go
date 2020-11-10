@@ -17,19 +17,31 @@ const (
 	en            float64 = in / 10 // 10 pitch.
 	em            float64 = float64(fontSize)
 	in            float64 = 6 * pica
-	topMargin     float64 = 1 * in
-	leftMargin    float64 = 1.5 * in
-	rightMargin   float64 = 1 * in
-	bottomMargin  float64 = 1 * in
-	pageWidth     float64 = 8.5 * in
-	pageHeight    float64 = 11 * in
+	vPageWidth    float64 = 8.5 * in
+	vPageHeight   float64 = 11 * in
+	vTopMargin    float64 = 1 * in
+	vLeftMargin   float64 = 1.5 * in
+	vRightMargin  float64 = 1 * in
+	vBottomMargin float64 = 1 * in
 	maxNumOfLines int     = 55
 	maxNumOfChars int     = 60
+)
+
+var (
+	pageWidth    float64
+	pageHeight   float64
+	topMargin    float64
+	leftMargin   float64
+	rightMargin  float64
+	bottomMargin float64
 )
 
 // Production makes the export module add scene numbers and other
 // production specific additions
 var Production = true
+
+// PageSize specifies the prefered page size
+var PageSize = ""
 
 var currentTheme = screenplay
 var currentTranslation = languages.Default.Translation()
@@ -40,7 +52,31 @@ var thisPDF = &gopdf.GoPdf{}
 
 // buildPDF creates a PDF file structure from a script.
 func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
-	thisPDF.Start(gopdf.Config{PageSize: gopdf.Rect{W: pageWidth, H: pageHeight}})
+	// Handle custom page size
+	if PageSize == "" {
+		richPageSize := script.TitlePage["pagesize"]
+		if len(richPageSize) != 0 {
+			PageSize = richPageSize[0].String()
+		}
+	}
+
+	// Set page size
+	selectedPageSize := *gopdf.PageSizeLetter
+	if PageSize == "a4" {
+		selectedPageSize = *gopdf.PageSizeA4
+	}
+	thisPDF.Start(gopdf.Config{PageSize: selectedPageSize})
+
+	// Correct margins
+	pageWidth = selectedPageSize.W
+	pageHeight = selectedPageSize.H
+
+	hOff := (pageWidth - vPageWidth) / 2
+	vOff := (pageHeight - vPageHeight) / 2
+	leftMargin = vLeftMargin + hOff
+	rightMargin = vRightMargin + hOff
+	topMargin = vTopMargin + vOff
+	bottomMargin = vBottomMargin + vOff
 
 	// Set language:
 	currentTranslation = script.Language.Translation()

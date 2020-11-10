@@ -7,7 +7,7 @@ clean:
 	@rm -rf build
 
 .PHONY: distclean
-distclean:
+distclean: clean
 	@rm -rf dist
 
 # Note: packaging and building for Linux
