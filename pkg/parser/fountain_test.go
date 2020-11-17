@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 /* FOUNTAIN MODE TESTS */

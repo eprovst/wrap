@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 // Indent keeps track of the current indent level.

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/Wraparound/wrap/languages"
+	"github.com/Wraparound/wrap/pkg/languages"
 )
 
 /* This file defines all the types used by the parser

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 // MakeHTML writes the output of WriteHTML() to a file

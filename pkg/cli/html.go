@@ -3,8 +3,8 @@ package cli
 import (
 	"io"
 
-	"github.com/Wraparound/wrap/ast"
-	"github.com/Wraparound/wrap/html"
+	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/Wraparound/wrap/pkg/html"
 	"github.com/spf13/cobra"
 )
 

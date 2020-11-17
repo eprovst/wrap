@@ -3,7 +3,7 @@ package pdf
 import (
 	"strings"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 type styledLine struct {

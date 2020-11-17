@@ -24,13 +24,13 @@
 
 # Ignore versioning
 /vendor
-go.sum
+/go.sum
 
 # Ignore profiling files
 *.profile
 
 # Ignore builds
-wrap
+/wrap
 
 # Editor
 .vscode/

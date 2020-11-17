@@ -4,7 +4,7 @@ Unicode True
 
 !define Name "Wrap"
 Name "${Name}"
-Outfile "../dist/${Name}_Win64.exe"
+Outfile "../dist/${Name}_Win64_nightly.exe"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
 InstallDir "$ProgramFiles64\Wraparound\${Name}"
 !define MUI_ICON "../assets/wrap/wrap.ico"

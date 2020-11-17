@@ -3,7 +3,7 @@ package pdf
 import (
 	"unicode"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 // Breaks line into lines of correct lenght.

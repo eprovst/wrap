@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Wraparound/wrap/ast"
-	"github.com/Wraparound/wrap/languages"
+	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/Wraparound/wrap/pkg/languages"
 	"github.com/signintech/gopdf"
 )
 
@@ -62,7 +62,7 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 
 	// Set page size
 	selectedPageSize := *gopdf.PageSizeLetter
-	if PageSize == "a4" {
+	if strings.EqualFold(PageSize, "a4") {
 		selectedPageSize = *gopdf.PageSizeA4
 	}
 	thisPDF.Start(gopdf.Config{PageSize: selectedPageSize})

@@ -1,7 +1,7 @@
 package pdf
 
 import (
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 type aSection struct {

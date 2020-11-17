@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"os"
 
-	"github.com/Wraparound/wrap/ast"
+	"github.com/Wraparound/wrap/pkg/ast"
 )
 
 // ParseFile parses directly from a file path.

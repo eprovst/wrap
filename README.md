@@ -1,6 +1,5 @@
-Wrap [![Gitter](https://badges.gitter.im/Wraparound/wrap.svg)](https://gitter.im/Wraparound/community) ![Travis](https://travis-ci.org/Wraparound/wrap.svg?branch=master)
+Wrap
 ====
-
 
 A Fountain/Wrap export tool, with some extras...
 
