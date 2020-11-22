@@ -11,9 +11,6 @@ import (
 // Production makes the export module add scene numbers
 var Production = false
 
-// URLToCSS contains the path to the Wraparound (or your) CSS.
-var URLToCSS = "https://cdn.jsdelivr.net/gh/wraparound/css@1.1/"
-
 var styles = map[string]string{
 	"screenplay": "screen",
 	"stageplay":  "stage",
@@ -227,13 +224,13 @@ func WriteHTML(script *ast.Script, writer io.Writer) {
 // WriteHTMLPage writes the script as html page to a *io.Writer.
 func WriteHTMLPage(script *ast.Script, writer io.Writer) {
 	richStyle := script.TitlePage["type"]
-	var styleFile string
+	var style string
 	if len(richStyle) != 0 {
-		styleFile = styles[strings.ToLower(richStyle[0].String())]
+		style = styles[strings.ToLower(richStyle[0].String())]
 	}
 
-	if styleFile == "" {
-		styleFile = "screen"
+	if style == "" {
+		style = "screen"
 	}
 
 	writeString("<!DOCTYPE html>\n", writer)
@@ -252,16 +249,24 @@ func WriteHTMLPage(script *ast.Script, writer io.Writer) {
 		}
 	}
 
-	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+styleFile+`.min.css">`+"\n", writer)
-	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+`play.min.css">`+"\n", writer)
-	writeString(`<link rel="stylesheet" type="text/css" href="`+URLToCSS+`page.min.css">`+"\n", writer)
+	writeString("<style>\n", writer)
+	indent++
+	writeText(pageCSS, writer)
+	writeText(playCSS, writer)
+	writeText(styleCSS[style], writer)
+	indent--
+	writeString("</style>\n", writer)
 
 	indent--
 	writeString("</head>\n", writer)
 
 	writeString("<body>\n", writer)
 	indent++
+	writeString(`<div class="page">`+"\n", writer)
+	indent++
 	WriteHTML(script, writer)
+	indent--
+	writeString("</div>\n", writer)
 	indent--
 	writeString("</body>\n", writer)
 

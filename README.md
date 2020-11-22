@@ -24,10 +24,6 @@ Wrap is available on Windows, macOS and most major Linux distributions.
 Download the [latest
 release](https://github.com/Wraparound/wrap/releases/latest).
 
-## Contact
-If you do something cool with Wrap or have any questions, you can leave them on
-[Gitter](https://gitter.im/Wraparound/community).
-
 ## Experience any issues?
 Most common issues are listed in the [FAQ](https://github.com/Wraparound/wrap/wiki/FAQ)
 and on the [wiki](https://github.com/Wraparound/wrap/wiki).
