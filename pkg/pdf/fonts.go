@@ -27,13 +27,13 @@ type Font struct {
 var (
 	CourierPrime = Font{
 		RomanName:      "Courier Prime",
-		Roman:          []string{"Courier Prime.ttf", "Courier Prime Regular.ttf"},
+		Roman:          []string{"Courier Prime.ttf", "Courier Prime Regular.ttf", "CourierPrime-Regular.ttf", "courier-prime.ttf"},
 		BoldName:       "Courier Prime Bold",
-		Bold:           []string{"Courier Prime Bold.ttf"},
+		Bold:           []string{"Courier Prime Bold.ttf", "CourierPrime-Bold.ttf", "courier-prime-bold.ttf"},
 		ItalicName:     "Courier Prime Italic",
-		Italic:         []string{"Courier Prime Italic.ttf"},
+		Italic:         []string{"Courier Prime Italic.ttf", "CourierPrime-Italic.ttf", "courier-prime-italic.ttf"},
 		BoldItalicName: "Courier Prime Bold Italic",
-		BoldItalic:     []string{"Courier Prime Bold Italic.ttf"},
+		BoldItalic:     []string{"Courier Prime Bold Italic.ttf", "CourierPrime-BoldItalic.ttf", "courier-prime-bold-italic.ttf"},
 	}
 
 	CourierNew = Font{
