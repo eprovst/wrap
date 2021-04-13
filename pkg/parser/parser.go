@@ -168,11 +168,28 @@ func Parser(input io.Reader) (*ast.Script, error) {
 
 	// First we read, categorise and clean the forced lines.
 	// The first line was already scanned by the previous step.
+	// Collecting independent notes also requires a bit of extra logic here.
 	var lines []categorisedLine
 
+	inIndependentNote := false
 	for lastScanSuccessful {
 
-		lines = append(lines, categoriser(line))
+		categorisedLine := categoriser(line)
+		if categorisedLine.Category == independentNote {
+			inIndependentNote = true
+		} else if inIndependentNote {
+			if categorisedLine.Category == emptyLine {
+				inIndependentNote = false
+			} else if strings.HasSuffix(strings.TrimSpace(categorisedLine.Line), "]]") {
+				categorisedLine.Category = independentNote
+				inIndependentNote = false
+			}
+		}
+
+		if inIndependentNote {
+			categorisedLine.Category = independentNote
+		}
+		lines = append(lines, categorisedLine)
 		lastScanSuccessful = scanner.Scan()
 		line = scanner.Text()
 	}
@@ -216,7 +233,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					lines[i].Category = action
 				}
 
-			case synopsis, section, startOfIndependentNote:
+			case synopsis, section:
 				// These gobble their surrounding lines.
 				gobbledLines := 0
 
@@ -227,6 +244,24 @@ func Parser(input io.Reader) (*ast.Script, error) {
 				}
 
 				if i+1 < len(lines) && lines[i+1].Category == emptyLine {
+					lines = append(lines[:i+1], lines[i+2:]...)
+					gobbledLines++
+				}
+
+			case independentNote:
+				// This one also gobbles its surrounding lines. But only if there
+				// are no other independent notes.
+				gobbledLines := 0
+
+				if (i > 0 && lines[i-1].Category == emptyLine) &&
+					(i > 1 && lines[i-2].Category != independentNote) {
+					lines = append(lines[:i-1], lines[i:]...)
+					i-- // Correct for removal of last line
+					gobbledLines++
+				}
+
+				if (i+1 < len(lines) && lines[i+1].Category == emptyLine) &&
+					(i+2 < len(lines) && lines[i+2].Category != independentNote) {
 					lines = append(lines[:i+1], lines[i+2:]...)
 					gobbledLines++
 				}
@@ -359,6 +394,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					dialog = append(dialog, ast.Lyrics(textHandler(contents)))
 
 				default:
+					i-- // Revisit this line
 					break dialogueAggregation
 				}
 			}
@@ -402,7 +438,7 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		case centeredText:
 			contents := []string{lines[i].Line}
 
-		centeredTextAggregation: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
+		centeredTextAggregation:
 			for i++; i < len(lines); i++ {
 				switch lines[i].Category {
 				case centeredText:
@@ -443,29 +479,18 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		case endAct:
 			elems = append(elems, ast.EndAct(textHandler([]string{lines[i].Line})))
 
-		case startOfIndependentNote: // TODO: BROKEN IF FORCED LINE IN COMMENT BLOCK?
+		case independentNote:
 			contents := []string{}
-			oldI := i
 			for ; i < len(lines); i++ {
-				if lines[i].Category != emptyLine && !strings.Contains(lines[i].Line, "]]") {
+				if lines[i].Category == independentNote {
 					contents = append(contents, lines[i].Line)
-				} else if strings.HasSuffix(strings.TrimSpace(lines[i].Line), "]]") {
-					contents = append(contents, lines[i].Line)
-					// Gobble empty lines
-					for i+1 < len(lines) && lines[i+1].Category == emptyLine {
-						i++
-					}
-					break
 				} else {
-					lines[oldI].Category = action
-					i = oldI - 1
+					i--
 					break
 				}
 			}
 
-			if i != oldI-1 {
-				elems = append(elems, ast.Note(textHandler(contents)))
-			}
+			elems = append(elems, ast.Note(textHandler(contents)))
 		}
 	}
 

@@ -294,7 +294,7 @@ const (
 	forcedEndAct
 	forcedSceneTag
 	forcedTransitionTag
-	startOfIndependentNote
+	independentNote
 	boneyard
 	lyrics
 	pageBreak
@@ -321,7 +321,7 @@ func getLineType(line string) lineCat {
 		return centeredText
 
 	} else if isStartOfIndependentNote(line) {
-		return startOfIndependentNote
+		return independentNote
 
 	} else if isForcedAction(line) {
 		return forcedAction
@@ -383,7 +383,7 @@ func getLineType(line string) lineCat {
 
 func isIgnoredLineType(lineType lineCat) bool {
 	switch lineType {
-	case boneyard, synopsis, section, pageBreak, emptyLine:
+	case boneyard, synopsis, section, pageBreak, emptyLine, independentNote:
 		return true
 
 	default:
