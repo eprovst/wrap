@@ -203,10 +203,10 @@ func Parser(input io.Reader) (*ast.Script, error) {
 		// A slightly more complex for loop as we remove lines.
 		if !lines[i].Forced {
 			switch lines[i].Category {
-			// Has to be surrounded by empty lines
-			case beginAct, endAct, transitionTag, sceneTag:
-				if i > 0 && isIgnoredLineType(lines[i-1].Category) &&
-					i+1 < len(lines) && isIgnoredLineType(lines[i+1].Category) {
+			// Has to be surrounded by empty lines, or beginning/end of file
+			case beginAct, endAct, sceneTag, transitionTag:
+				if (i <= 0 || isIgnoredLineType(lines[i-1].Category)) &&
+					(i+1 >= len(lines) || isIgnoredLineType(lines[i+1].Category)) {
 					// Cleanup of current line
 					lines[i].Line = normaliseLine(lines[i].Line)
 
@@ -214,10 +214,10 @@ func Parser(input io.Reader) (*ast.Script, error) {
 					lines[i].Category = action
 				}
 
-			// Has to be preceded by an empty line.
+			// Has to be preceded by an empty line, or beginning of file.
 			// But not followed by one.
 			case character, characterTwo:
-				if i > 0 && isIgnoredLineType(lines[i-1].Category) &&
+				if (i <= 0 || isIgnoredLineType(lines[i-1].Category)) &&
 					!(i+1 >= len(lines) || isIgnoredLineType(lines[i+1].Category)) {
 
 					// Cleanup of current line

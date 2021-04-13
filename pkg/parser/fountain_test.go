@@ -434,6 +434,8 @@ EST HOUSE DAY
 
 INT. HOUSE - DAY (1979)
 
+int. house - day
+
 .KITCHEN
 
 ... not a scene header.
@@ -441,9 +443,7 @@ INT. HOUSE - DAY (1979)
 INT. HOUSE - DAY
 EXT. HOUSE - DAY
 
-ESTABLISHING
-
-int. house - day`
+ESTABLISHING`
 
 	output := scriptFromElements([]ast.Element{
 		ast.Scene{
@@ -503,8 +503,12 @@ int. house - day`
 			SceneNumber: "14",
 		},
 		ast.Scene{
-			Slugline:    textHandler([]string{"KITCHEN"}),
+			Slugline:    textHandler([]string{"int. house - day"}),
 			SceneNumber: "15",
+		},
+		ast.Scene{
+			Slugline:    textHandler([]string{"KITCHEN"}),
+			SceneNumber: "16",
 		},
 		ast.Action(textHandler([]string{
 			"... not a scene header.",
@@ -513,8 +517,6 @@ int. house - day`
 			"EXT. HOUSE - DAY",
 			"",
 			"ESTABLISHING",
-			"",
-			"int. house - day",
 		})),
 	})
 
