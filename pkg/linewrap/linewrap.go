@@ -1,4 +1,4 @@
-package pdf
+package linewrap
 
 import (
 	"unicode"
@@ -6,24 +6,17 @@ import (
 	"github.com/Wraparound/wrap/pkg/ast"
 )
 
-// Breaks line into lines of correct lenght.
-func wordwrap(line styledLine) []styledLine {
-	lineLenght := currentTheme[line.Type].LineLenght
-
-	// If the line lenght is undefined or invalid, change it to a default.
-	if lineLenght <= 1 {
-		lineLenght = maxNumOfChars
-	}
-
-	currentLineLenght := 0
+// WrapLine breaks line into lines of correct length.
+func WrapLine(line ast.Line, lineLength int) []ast.Line {
+	currentLineLength := 0
 	currentLineContent := []ast.Cell{}
-	lines := []styledLine{}
+	lines := []ast.Line{}
 
-	for currentCell := 0; currentCell < len(line.Content); currentCell++ {
-		cell := line.Content[currentCell]
-		currentLineLenght += cell.Lenght()
+	for currentCell := 0; currentCell < len(line); currentCell++ {
+		cell := line[currentCell]
+		currentLineLength += cell.Lenght()
 
-		if currentLineLenght <= lineLenght {
+		if currentLineLength <= lineLength {
 			currentLineContent = append(currentLineContent, cell)
 
 		} else {
@@ -36,14 +29,14 @@ func wordwrap(line styledLine) []styledLine {
 			if cell.Lenght() == 1 {
 				// Very peculiar edge case, backtrack one cell and break that one
 				currentCell--
-				cell = line.Content[currentCell]
+				cell = line[currentCell]
 				currentLineContent = currentLineContent[:len(currentLineContent)-1]
 
 				overflow = 1
 				cellContent = []rune(cell.Content)
 
 			} else {
-				overflow = currentLineLenght - lineLenght
+				overflow = currentLineLength - lineLength
 
 				// We use a rune slice to be able to find 'nonbreakingspaces'.
 				cellContent = []rune(cell.Content)
@@ -91,28 +84,22 @@ func wordwrap(line styledLine) []styledLine {
 			// Add the first half to the current line and that line to the final list
 			currentLineContent = append(currentLineContent, firstHalfOfCell)
 
-			lines = append(lines, styledLine{
-				Content: currentLineContent,
-				Type:    line.Type,
-			})
+			lines = append(lines, currentLineContent)
 
 			// Prepare next line aggregation
-			currentLineLenght = 0
+			currentLineLength = 0
 			currentLineContent = []ast.Cell{}
 
 			// Place the second half at the current position so it is reexamined, if not empty
 			if secondHalfOfCell.Content != "" {
-				line.Content[currentCell] = secondHalfOfCell
+				line[currentCell] = secondHalfOfCell
 				currentCell-- // Reexamine
 			}
 		}
 	}
 
 	// Add last line:
-	lines = append(lines, styledLine{
-		Content: currentLineContent,
-		Type:    line.Type,
-	})
+	lines = append(lines, currentLineContent)
 
 	return lines
 }

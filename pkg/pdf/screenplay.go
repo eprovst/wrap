@@ -5,89 +5,89 @@ package pdf
 var screenplay = aTheme{
 	action: lineStyle{
 		LeadingBefore: 1,
-		LineLenght:    60,
+		LineLength:    60,
 	},
 	act: lineStyle{
 		LeadingBefore: 0,
-		LineLenght:    35,
+		LineLength:    35,
 		Indent:        25 * en,
 	},
 	slugLine: lineStyle{
-		LineLenght:    60,
+		LineLength:    60,
 		LeadingBefore: 2,
 		AllCaps:       true,
 	},
 	centeredText: lineStyle{
 		LeadingBefore: 1,
-		LineLenght:    60,
+		LineLength:    60,
 		Centered:      true,
 	},
 	looseLyrics: lineStyle{
 		LeadingBefore: 1,
-		LineLenght:    60,
+		LineLength:    60,
 		Italics:       true,
 	},
 	transition: lineStyle{
 		LeadingBefore: 1,
-		LineLenght:    15,
+		LineLength:    15,
 		Indent:        45 * en,
 	},
 
 	character: lineStyle{
 		LeadingBefore: 1,
 		Indent:        22 * en,
-		LineLenght:    38,
+		LineLength:    38,
 	},
 	parenthetical: lineStyle{
 		FirstLineIndent: 16 * en,
 		Indent:          17 * en,
-		LineLenght:      24,
+		LineLength:      24,
 	},
 	dialogue: lineStyle{
 		Indent:     10 * en,
-		LineLenght: 40,
+		LineLength: 40,
 	},
 	lyrics: lineStyle{
 		Indent:     10 * en,
-		LineLenght: 40,
+		LineLength: 40,
 		Italics:    true,
 	},
 
 	dualCharacterOne: lineStyle{
 		LeadingBefore: 1,
 		Indent:        12 * en,
-		LineLenght:    17,
+		LineLength:    17,
 	},
 	dualParentheticalOne: lineStyle{
 		FirstLineIndent: 2 * en,
 		Indent:          3 * en,
-		LineLenght:      17,
+		LineLength:      17,
 	},
 	dualDialogueOne: lineStyle{
-		LineLenght: 29,
+		LineLength: 29,
 	},
 	dualLyricsOne: lineStyle{
-		LineLenght: 29,
+		LineLength: 29,
 		Italics:    true,
 	},
 
 	dualCharacterTwo: lineStyle{
 		LeadingBefore: 1,
 		Indent:        43 * en,
-		LineLenght:    17,
+		LineLength:    17,
 	},
 	dualParentheticalTwo: lineStyle{
 		FirstLineIndent: 33 * en,
 		Indent:          34 * en,
-		LineLenght:      17,
+		LineLength:      17,
 	},
 	dualDialogueTwo: lineStyle{
 		Indent:     31 * en,
-		LineLenght: 29,
+		LineLength: 29,
 	},
 	dualLyricsTwo: lineStyle{
 		Indent:     31 * en,
-		LineLenght: 29,
+		LineLength: 29,
 		Italics:    true,
 	},
 
@@ -123,10 +123,10 @@ var screenplay = aTheme{
 	titlePageRight: lineStyle{
 		LeadingBefore: 2,
 		FlushRight:    true,
-		LineLenght:    30,
+		LineLength:    30,
 	},
 	titlePageLeft: lineStyle{
 		LeadingBefore: 2,
-		LineLenght:    30,
+		LineLength:    30,
 	},
 }

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/Wraparound/wrap/pkg/linewrap"
 )
 
 type styledLine struct {
@@ -41,7 +42,7 @@ func cellify(text []ast.Line, style lineType) []styledLine {
 			Type:    style,
 		}
 
-		lines = append(lines, wordwrap(styledline)...)
+		lines = append(lines, wrapline(styledline)...)
 	}
 
 	// If the last break was only a break, then...
@@ -56,4 +57,27 @@ func cellify(text []ast.Line, style lineType) []styledLine {
 	}
 
 	return lines
+}
+
+// Breaks line into lines of correct lenght.
+func wrapline(line styledLine) []styledLine {
+	lineType := line.Type
+	lineLength := currentTheme[lineType].LineLength
+
+	// If the line length is undefined or invalid, change it to a default.
+	if lineLength <= 1 {
+		lineLength = maxNumOfChars
+	}
+
+	lines := linewrap.WrapLine(line.Content, lineLength)
+
+	styledLines := make([]styledLine, len(lines))
+	for i, line := range lines {
+		styledLines[i] = styledLine{
+			Content: line,
+			Type:    lineType,
+		}
+	}
+
+	return styledLines
 }
