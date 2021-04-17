@@ -53,7 +53,7 @@ type lineStyle struct {
 	Indent          float64
 	LeadingBefore   int
 	Leading         int
-	LineLenght      int
+	LineLength      int
 	AllCaps         bool
 	Italics         bool
 	Boldface        bool
