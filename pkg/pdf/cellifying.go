@@ -31,18 +31,18 @@ func (line styledLine) isEmpty() bool {
 }
 
 /* Prepares a section for insertion into the PDF.
-Linelength is the maximum linelenght in characters (we work with a monospace font). */
+Linelength is the maximum linelength in characters (we work with a monospace font). */
 func cellify(text []ast.Line, style lineType) []styledLine {
 	// Now sart building the line list.
 	lines := []styledLine{}
 
-	for _, line := range text {
+	for i, line := range text {
 		styledline := styledLine{
 			Content: line,
 			Type:    style,
 		}
 
-		lines = append(lines, wrapline(styledline)...)
+		lines = append(lines, wrapLine(styledline, i == 0)...)
 	}
 
 	// If the last break was only a break, then...
@@ -60,7 +60,7 @@ func cellify(text []ast.Line, style lineType) []styledLine {
 }
 
 // Breaks line into lines of correct lenght.
-func wrapline(line styledLine) []styledLine {
+func wrapLine(line styledLine, firstLineOfSection bool) []styledLine {
 	lineType := line.Type
 	lineLength := currentTheme[lineType].LineLength
 
@@ -69,7 +69,22 @@ func wrapline(line styledLine) []styledLine {
 		lineLength = maxNumOfChars
 	}
 
-	lines := linewrap.WrapLine(line.Content, lineLength)
+	// Wrap the lines
+	lines := []ast.Line{}
+
+	// Use different line length for first line if start of section
+	if firstLineOfSection {
+		firstLineLength := lineLength - currentTheme[lineType].FirstLineOffset
+		head, tail := linewrap.WrapLineOnce(line.Content, firstLineLength)
+		lines = append(lines, head)
+
+		// Now wrap tail as usual
+		if len(tail) > 0 {
+			lines = append(lines, linewrap.WrapLine(tail, lineLength)...)
+		}
+	} else {
+		lines = linewrap.WrapLine(line.Content, lineLength)
+	}
 
 	styledLines := make([]styledLine, len(lines))
 	for i, line := range lines {

@@ -39,8 +39,8 @@ var screenplay = aTheme{
 		LineLength:    38,
 	},
 	parenthetical: lineStyle{
-		FirstLineIndent: 16 * en,
 		Indent:          17 * en,
+		FirstLineOffset: -1,
 		LineLength:      24,
 	},
 	dialogue: lineStyle{
@@ -59,8 +59,8 @@ var screenplay = aTheme{
 		LineLength:    17,
 	},
 	dualParentheticalOne: lineStyle{
-		FirstLineIndent: 2 * en,
 		Indent:          3 * en,
+		FirstLineOffset: -1,
 		LineLength:      17,
 	},
 	dualDialogueOne: lineStyle{
@@ -77,8 +77,8 @@ var screenplay = aTheme{
 		LineLength:    17,
 	},
 	dualParentheticalTwo: lineStyle{
-		FirstLineIndent: 33 * en,
 		Indent:          34 * en,
+		FirstLineOffset: -1,
 		LineLength:      17,
 	},
 	dualDialogueTwo: lineStyle{

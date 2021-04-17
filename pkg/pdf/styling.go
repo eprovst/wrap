@@ -49,8 +49,8 @@ const (
 type aTheme map[lineType]lineStyle
 
 type lineStyle struct {
-	FirstLineIndent float64
 	Indent          float64
+	FirstLineOffset int
 	LeadingBefore   int
 	Leading         int
 	LineLength      int
@@ -90,25 +90,19 @@ func styleLine(line styledLine) {
 	// No leading on top of page.
 	thisPDF.Br(float64(line.leading()) * em)
 
+	// Compute indentation
+	indent := currentStyle.Indent
+	if line.FirstOfSection {
+		indent += float64(currentStyle.FirstLineOffset) * en
+	}
+
 	// Place the writehead:
 	if currentStyle.Centered {
-		if line.FirstOfSection && currentStyle.FirstLineIndent != 0 {
-			thisPDF.SetX(leftMargin/2 + currentStyle.FirstLineIndent/2 + (pageWidth-rightMargin)/2 - float64(line.len())*en/2)
-		} else {
-			thisPDF.SetX(leftMargin/2 + currentStyle.Indent/2 + (pageWidth-rightMargin)/2 - float64(line.len())*en/2)
-		}
+		thisPDF.SetX(leftMargin/2 + indent/2 + (pageWidth-rightMargin)/2 - float64(line.len())*en/2)
 	} else if currentStyle.FlushRight {
-		if line.FirstOfSection && currentStyle.FirstLineIndent != 0 {
-			thisPDF.SetX(pageWidth - rightMargin - currentStyle.FirstLineIndent - float64(line.len())*en)
-		} else {
-			thisPDF.SetX(pageWidth - rightMargin - currentStyle.Indent - float64(line.len())*en)
-		}
+		thisPDF.SetX(pageWidth - rightMargin - indent - float64(line.len())*en)
 	} else {
-		if line.FirstOfSection && currentStyle.FirstLineIndent != 0 {
-			thisPDF.SetX(leftMargin + currentStyle.FirstLineIndent)
-		} else {
-			thisPDF.SetX(leftMargin + currentStyle.Indent)
-		}
+		thisPDF.SetX(leftMargin + indent)
 	}
 
 	// Now write the cells.
