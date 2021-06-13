@@ -71,6 +71,12 @@ func GetLanguage(alias string) Language {
 
 		return Italian
 
+    case
+        "spanish",
+        "español":
+
+        return Spanish
+
 	default:
 		return Default
 	}
