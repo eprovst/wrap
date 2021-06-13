@@ -73,6 +73,7 @@ func GetLanguage(alias string) Language {
 
     case
         "spanish",
+        "espanol", // ñ is hard to find too...
         "español":
 
         return Spanish
