@@ -28,6 +28,7 @@ const (
 	French
 	German
 	Italian
+    Spanish
 )
 
 // Default language is English
