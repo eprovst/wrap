@@ -7,7 +7,7 @@ var SpanishTranslation = Translation{
 
 	SceneTags: []string{
         "int ", "ext ", "est ", "int./ext ", "int/ext ", "i/e ", "i./e ",
-		"int.", "ext.", "est.", "int./ext.", "int/ext.", "i/e.", "i./e.",
+        "int.", "ext.", "est.", "int./ext.", "int/ext.", "i/e.", "i./e.",
 	},
 
 	StageplaySceneTags: []string{
