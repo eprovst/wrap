@@ -28,7 +28,7 @@ const (
 	French
 	German
 	Italian
-    Spanish
+	Spanish
 )
 
 // Default language is English
@@ -71,12 +71,12 @@ func GetLanguage(alias string) Language {
 
 		return Italian
 
-    case
-        "spanish",
-        "espanol", // ñ is hard to find too...
-        "español":
+	case
+		"spanish",
+		"espanol", // ñ is hard to find too...
+		"español":
 
-        return Spanish
+		return Spanish
 
 	default:
 		return Default
@@ -101,6 +101,9 @@ func (lang Language) String() string {
 	case Italian:
 		return "Italian"
 
+	case Spanish:
+		return "Spanish"
+
 	default:
 		panic("unknown language")
 	}
@@ -123,6 +126,9 @@ func (lang Language) Translation() Translation {
 
 	case Italian:
 		return ItalianTranslation
+
+	case Spanish:
+		return SpanishTranslation
 
 	default:
 		panic("unknown language")
