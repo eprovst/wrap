@@ -20,91 +20,61 @@ func WrapLine(line ast.Line, lineLength int) []ast.Line {
 
 // WrapLineOnce breaks line into a line of correct length and the remainder.
 func WrapLineOnce(line ast.Line, lineLength int) (ast.Line, ast.Line) {
-	headLength := 0
-	head := []ast.Cell{}
+	// TODO: Allow break with a hyphen on relevant marker.
+	// TODO: Ignore zero width characters.
 
-	for currentCell := 0; currentCell < len(line); currentCell++ {
-		cell := line[currentCell]
-		headLength += cell.Lenght()
+	lineText := []rune(line.String())
 
-		if headLength <= lineLength {
-			head = append(head, cell)
+	// If the line is short enough, return
+	if len(lineText) <= lineLength {
+		return line, ast.Line{}
+	}
 
-		} else {
-			// Select breaking parameters
-			var (
-				overflow    int
-				cellContent []rune
-			)
-
-			if cell.Lenght() == 1 {
-				// Very peculiar edge case, backtrack one cell and break that one
-				currentCell--
-				cell = line[currentCell]
-				head = head[:len(head)-1]
-
-				overflow = 1
-				cellContent = []rune(cell.Content)
-
-			} else {
-				overflow = headLength - lineLength
-
-				// We use a rune slice to be able to find 'nonbreakingspaces'.
-				cellContent = []rune(cell.Content)
-			}
-
-			// Now split the cell:
-			// Let's look for possible break points:
-			breakoffset := overflow
-			j := overflow
-			for foundbreak := false; !foundbreak &&
-				j < len(cellContent); j++ {
-
-				// Is potential breakpoint?
-				if unicode.IsSpace(cellContent[len(cellContent)-j]) ||
-					cellContent[len(cellContent)-j-1] == '-' {
-
-					breakoffset = j
-					foundbreak = true
-				}
-			}
-
-			// Now break the line:
-			firstHalfOfCell := cell
-			hyphenInsterted := false
-			if len(cellContent)-breakoffset >= 1 &&
-				unicode.IsLetter(cellContent[len(cellContent)-breakoffset-1]) &&
-				unicode.IsLetter(cellContent[len(cellContent)-breakoffset]) {
-
-				hyphenInsterted = true
-				firstHalfOfCell.Content = string(cellContent[:len(cellContent)-breakoffset-1]) + "-"
-
-			} else {
-				firstHalfOfCell.Content = removeSpaceAfter(string(cellContent[:len(cellContent)-breakoffset]))
-			}
-
-			secondHalfOfCell := cell
-
-			if hyphenInsterted {
-				secondHalfOfCell.Content = removeSpaceBefore(string(cellContent[len(cellContent)-breakoffset-1:]))
-
-			} else {
-				secondHalfOfCell.Content = removeSpaceBefore(string(cellContent[len(cellContent)-breakoffset:]))
-			}
-
-			head = append(head, firstHalfOfCell)
-
-			// Place the second half at the current position so it is reexamined, if not empty
-			if secondHalfOfCell.Content != "" {
-				line[currentCell] = secondHalfOfCell
-				// This cell is still part of the tail
-				currentCell--
-			}
-
-			return head, line[currentCell+1:]
+	// Else look for possible break point
+	bidx := lineLength // bidx is the first index to be included in the next line.
+	for ; bidx > 0; bidx-- {
+		// Is potential breakpoint?
+		precC := lineText[bidx-1]
+		thisC := lineText[bidx]
+		if (unicode.IsSpace(thisC) && thisC != '\u00A0') || // U+00A0 is NBSP
+			(unicode.IsLetter(precC) && !unicode.IsLetter(thisC) && !unicode.IsPunct(thisC)) ||
+			(!unicode.IsLetter(precC) && unicode.IsLetter(thisC)) {
+			break
 		}
 	}
 
-	// Did not need to wrap line
-	return line, ast.Line{}
+	// No break found, TODO: at least try something?
+	if bidx == 0 {
+		return line, ast.Line{}
+	}
+
+	// Now break the line at the found breakpoint
+	headLength := 0
+	head := []ast.Cell{}
+	tail := []ast.Cell{}
+
+	for currentCell := 0; currentCell < len(line); currentCell++ {
+		cell := line[currentCell]
+
+		// If breakpoint in this cell: break cell
+		if headLength+cell.Lenght() > bidx {
+			cidx := bidx - headLength
+
+			fh := cell
+			sh := cell
+
+			fh.Content = removeSpaceAfter(string(cell.Content[:cidx]))
+			sh.Content = removeSpaceBefore(string(cell.Content[cidx:]))
+
+			head = append(head, fh)
+			tail = append(ast.Line{sh}, line[currentCell+1:]...)
+
+			break
+		}
+
+		head = append(head, cell)
+		headLength += cell.Lenght()
+	}
+
+	return head, tail
 }
