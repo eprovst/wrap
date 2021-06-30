@@ -4,25 +4,31 @@ import (
 	"unicode"
 )
 
-func removeSpaceBefore(s string) string {
+func removeSpaceBefore(s []rune) []rune {
 	// Can't remove from something empty...
-	if s == "" {
-		return ""
+	if len(s) == 0 {
+		return []rune{}
 	}
 
 	i := 0
-	for currentlyspace := true; i < len(s) && currentlyspace; i++ {
-		currentlyspace = unicode.IsSpace(rune(s[i]))
+	currentlyspace := true
+	for ; i < len(s) && currentlyspace; i++ {
+		currentlyspace = unicode.IsSpace(s[i])
 	}
 
-	// Now i is the point where the first nonspace is, thus
+	// It's all spaces
+	if currentlyspace {
+		return []rune{}
+	}
+
+	// Now i is the point after where the first nonspace is, thus
 	return s[i-1:]
 }
 
-func removeSpaceAfter(s string) string {
+func removeSpaceAfter(s []rune) []rune {
 	// Can't remove from something empty...
-	if s == "" {
-		return ""
+	if len(s) == 0 {
+		return s
 	}
 
 	s = reverse(s)
@@ -31,12 +37,10 @@ func removeSpaceAfter(s string) string {
 	return s
 }
 
-func reverse(s string) string {
-	c := []rune(s)
-
-	for i, j := 0, len(c)-1; i < len(c)/2; i, j = i+1, j-1 {
-		c[i], c[j] = c[j], c[i]
+func reverse(s []rune) []rune {
+	for i, j := 0, len(s)-1; i < len(s)/2; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
 	}
 
-	return string(c)
+	return s
 }

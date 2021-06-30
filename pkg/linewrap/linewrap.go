@@ -36,15 +36,42 @@ func WrapLineOnce(line ast.Line, lineLength int) (ast.Line, ast.Line) {
 		// Is potential breakpoint?
 		precC := lineText[bidx-1]
 		thisC := lineText[bidx]
-		if (unicode.IsSpace(thisC) && thisC != '\u00A0') || // U+00A0 is NBSP
-			(unicode.IsLetter(precC) && !unicode.IsLetter(thisC) && !unicode.IsPunct(thisC)) ||
-			(!unicode.IsLetter(precC) && unicode.IsLetter(thisC)) {
+		if (unicode.In(precC, unicode.Pd) && !unicode.In(thisC, unicode.Pd)) ||
+			(unicode.IsSpace(thisC) && thisC != '\u00A0') { // U+00A0 is NBSP
 			break
 		}
 	}
 
-	// No break found, TODO: at least try something?
+	// No break found, try a less ideal point
 	if bidx == 0 {
+		bidx = lineLength
+		for ; bidx > 0; bidx-- {
+			// Is second rate breakpoint?
+			precC := lineText[bidx-1]
+			thisC := lineText[bidx]
+			if (unicode.IsLetter(precC) && !unicode.IsLetter(thisC)) ||
+				(!unicode.IsLetter(precC) && unicode.IsLetter(thisC)) {
+				break
+			}
+		}
+	}
+
+	// Still no break found, try an even less ideal point
+	if bidx == 0 {
+		bidx = lineLength + 1
+		for ; bidx > 0 && bidx < len(lineText); bidx++ {
+			// Is third rate breakpoint?
+			precC := lineText[bidx-1]
+			thisC := lineText[bidx]
+			if (unicode.IsLetter(precC) && !unicode.IsLetter(thisC)) ||
+				(!unicode.IsLetter(precC) && unicode.IsLetter(thisC)) {
+				break
+			}
+		}
+	}
+
+	// Still no found: give up.
+	if bidx >= len(lineText) {
 		return line, ast.Line{}
 	}
 
@@ -55,25 +82,30 @@ func WrapLineOnce(line ast.Line, lineLength int) (ast.Line, ast.Line) {
 
 	for currentCell := 0; currentCell < len(line); currentCell++ {
 		cell := line[currentCell]
+		cellContent := []rune(cell.Content)
 
 		// If breakpoint in this cell: break cell
-		if headLength+cell.Lenght() > bidx {
+		if headLength+len(cellContent) > bidx {
 			cidx := bidx - headLength
 
 			fh := cell
 			sh := cell
 
-			fh.Content = removeSpaceAfter(string(cell.Content[:cidx]))
-			sh.Content = removeSpaceBefore(string(cell.Content[cidx:]))
+			fh.Content = string(removeSpaceAfter(cellContent[:cidx]))
+			sh.Content = string(removeSpaceBefore(cellContent[cidx:]))
 
 			head = append(head, fh)
-			tail = append(ast.Line{sh}, line[currentCell+1:]...)
+			if len(sh.Content) == 0 {
+				tail = line[currentCell+1:]
+			} else {
+				tail = append(ast.Line{sh}, line[currentCell+1:]...)
+			}
 
 			break
 		}
 
 		head = append(head, cell)
-		headLength += cell.Lenght()
+		headLength += len(cellContent)
 	}
 
 	return head, tail
