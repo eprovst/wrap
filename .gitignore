@@ -24,7 +24,6 @@
 
 # Ignore versioning
 /vendor
-/go.sum
 
 # Ignore profiling files
 *.profile
@@ -34,3 +33,7 @@
 
 # Editor
 .vscode/
+
+# Env
+.direnv/
+.envrc

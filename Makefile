@@ -19,6 +19,9 @@ prime/bash-complete.sh prime/zsh-complete.sh:
 	mkdir -p prime
 	mv *-complete.sh prime
 
+build: cmd/wrap
+	go build ./$<
+
 build/windows/wrap.exe: cmd/wrap
 	go generate ./$<
 	GOARCH=amd64 GOOS=windows go build -o $@ $(FLAGS) ./$<
