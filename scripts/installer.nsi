@@ -6,7 +6,7 @@ Unicode True
 Name "${Name}"
 Outfile "../dist/${Name}_Win64_nightly.exe"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
-InstallDir "$ProgramFiles64\Wraparound\${Name}"
+InstallDir "$ProgramFiles64\${Name}"
 !define MUI_ICON "../assets/wrap/wrap.ico"
 
 !include LogicLib.nsh

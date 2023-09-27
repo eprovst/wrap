@@ -3,7 +3,7 @@ package html
 /* Embedded CSS */
 
 const pageCSS = `/*!
-* Wraparound CSS
+* Wrap CSS
 * Copyright Evert Provoost.
 * Licensed under MIT.
 */

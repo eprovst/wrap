@@ -3,7 +3,7 @@ package linewrap
 import (
 	"unicode"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 // WrapLine breaks line into lines of correct length.

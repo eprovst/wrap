@@ -7,7 +7,7 @@
 	<key>CFBundleIconFile</key>
 	<string>wrapApp.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.github.wraparound</string>
+	<string>com.github.eprovst.wrap</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

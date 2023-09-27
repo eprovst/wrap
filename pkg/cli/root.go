@@ -8,7 +8,7 @@ var longDescription = `Wrap is an open source command line tool that is able to
 convert Fountain and Wrap files into a correctly formatted
 screen- or stageplay as an HTML or a PDF.
 
-Visit <https://wraparound.github.io/> for more info.`
+Visit <https://github.com/eprovst/wrap> for more info.`
 
 // WrapCmd represents the base command when called without any subcommands
 var WrapCmd = &cobra.Command{

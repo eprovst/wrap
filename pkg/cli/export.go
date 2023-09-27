@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Wraparound/wrap/pkg/ast"
-	"github.com/Wraparound/wrap/pkg/parser"
+	"github.com/eprovst/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/parser"
 )
 
 func export(args []string, targetExtention string, exportFunction func(*ast.Script, io.Writer) error) {

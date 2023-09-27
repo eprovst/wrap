@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Wraparound/wrap/pkg/pdf"
+	"github.com/eprovst/wrap/pkg/pdf"
 	"github.com/spf13/cobra"
 )
 

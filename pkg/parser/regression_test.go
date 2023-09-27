@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 // Bug found and example given by Paul W. Rankin

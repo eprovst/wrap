@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 const debug = true

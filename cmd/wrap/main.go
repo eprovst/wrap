@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Wraparound/wrap/pkg/cli"
+	"github.com/eprovst/wrap/pkg/cli"
 )
 
 func main() {

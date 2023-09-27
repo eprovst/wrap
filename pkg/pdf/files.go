@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 // MakePDF writes the PDF to a file

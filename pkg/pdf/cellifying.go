@@ -3,8 +3,8 @@ package pdf
 import (
 	"strings"
 
-	"github.com/Wraparound/wrap/pkg/ast"
-	"github.com/Wraparound/wrap/pkg/linewrap"
+	"github.com/eprovst/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/linewrap"
 )
 
 type styledLine struct {

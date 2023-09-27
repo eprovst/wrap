@@ -3,7 +3,7 @@ package pdf
 import (
 	"strings"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 // This file contains tools for theming.

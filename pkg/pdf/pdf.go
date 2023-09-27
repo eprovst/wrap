@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Wraparound/wrap/pkg/ast"
-	"github.com/Wraparound/wrap/pkg/languages"
+	"github.com/eprovst/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/languages"
 	"github.com/signintech/gopdf"
 )
 
@@ -121,7 +121,7 @@ func buildPDF(script *ast.Script) (*gopdf.GoPdf, error) {
 		Title:        title,
 		Author:       ast.LinesToString(authors),
 		Creator:      "Wrap",
-		Producer:     "Wraparound PDF",
+		Producer:     "Wrap PDF",
 		CreationDate: time.Now(),
 	})
 

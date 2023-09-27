@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Wraparound/wrap/pkg/ast"
-	"github.com/Wraparound/wrap/pkg/languages"
+	"github.com/eprovst/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/languages"
 )
 
 // UseWrapExtensions is a flag to show wheter

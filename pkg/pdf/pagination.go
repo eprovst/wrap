@@ -3,7 +3,7 @@ package pdf
 import (
 	"strconv"
 
-	"github.com/Wraparound/wrap/pkg/ast"
+	"github.com/eprovst/wrap/pkg/ast"
 )
 
 func addLines(lines []styledLine) {

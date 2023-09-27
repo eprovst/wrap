@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/Wraparound/wrap/pkg/languages"
+	"github.com/eprovst/wrap/pkg/languages"
 )
 
 /* This file defines all the types used by the parser
