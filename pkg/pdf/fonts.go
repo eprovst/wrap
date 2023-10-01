@@ -65,6 +65,8 @@ var AutoFontSelection = true
 // SelectedFont is the font to be used during export if AutoSelect is disabled
 var SelectedFont = CourierPrime
 
+var LoadedFont Font
+
 func findFont(fonts []string) (string, error) {
 	for _, font := range fonts {
 		path, err := findfont.Find(font)
@@ -116,19 +118,20 @@ func loadFont(font Font) error {
 	}
 
 	// Successfully found the font
-	thisPDF.AddTTFFont("courier", pathToRegular)
+	LoadedFont = font
+	thisPDF.AddTTFFont(LoadedFont.RomanName, pathToRegular)
 
-	thisPDF.AddTTFFontWithOption("courier", pathToBold,
+	thisPDF.AddTTFFontWithOption(LoadedFont.RomanName, pathToBold,
 		gopdf.TtfOption{
 			Style: gopdf.Bold,
 		})
 
-	thisPDF.AddTTFFontWithOption("courier", pathToItalic,
+	thisPDF.AddTTFFontWithOption(LoadedFont.RomanName, pathToItalic,
 		gopdf.TtfOption{
 			Style: gopdf.Italic,
 		})
 
-	thisPDF.AddTTFFontWithOption("courier", pathToBoldItalic,
+	thisPDF.AddTTFFontWithOption(LoadedFont.RomanName, pathToBoldItalic,
 		gopdf.TtfOption{
 			Style: gopdf.Italic | gopdf.Bold,
 		})
@@ -173,9 +176,9 @@ func loadFonts() {
 }
 
 func setDefaultFont() {
-	thisPDF.SetFont("courier", "", fontSize)
+	thisPDF.SetFont(LoadedFont.RomanName, "", fontSize)
 }
 
 func setStyledFont(style string) {
-	thisPDF.SetFont("courier", style, fontSize)
+	thisPDF.SetFont(LoadedFont.RomanName, style, fontSize)
 }
