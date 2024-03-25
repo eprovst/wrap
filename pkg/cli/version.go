@@ -13,7 +13,7 @@ var versionCmd = &cobra.Command{
 	Short: "show version information for Wrap",
 	Long:  longDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Wrap v0.3.2 on " + strings.Title(runtime.GOOS))
+		fmt.Println("Wrap v0.3.3 on " + strings.Title(runtime.GOOS))
 	},
 }
 
