@@ -20,8 +20,6 @@ All this in a FOSS package that you can use straight from the commandline.
 **NOTE: This program is currently not actively maintained, it seems to
 work fine, but use at your own risk.**
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/wrap)
-
 Wrap is available on Windows, macOS and most major Linux distributions.  
 Download the [latest
 release](https://github.com/eprovst/wrap/releases/latest).
