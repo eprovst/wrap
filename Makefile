@@ -11,13 +11,17 @@ clean:
 distclean: clean
 	rm -rf dist
 
-# Note: packaging and building for Linux
-#       is done through build.snapcraft.io
-
 prime/bash-complete.sh prime/zsh-complete.sh:
 	go run scripts/generate_completions.go
 	mkdir -p prime
 	mv *-complete.sh prime
+
+build/linux/wrap: cmd/wrap
+	GOARCH=amd64 GOOS=linux go build -o $@ $(FLAGS) ./$<
+
+dist/Wrap_Linux_nightly.zip: build/linux/wrap
+	mkdir -p dist
+	zip $@ $<
 
 build/windows/wrap.exe: cmd/wrap
 	go generate ./$<
@@ -29,7 +33,7 @@ dist/Wrap_Win64_nightly.exe: build/windows/wrap.exe
 	makensis -V2 -DARCH=x64 scripts/installer.nsi
 
 build/darwin/wrap: cmd/wrap
-	GOARCH=amd64 GOOS=darwin go build -o $@ $(FLAGS) ./$<
+	GOARCH=arm64 GOOS=darwin go build -o $@ $(FLAGS) ./$<
 
 dist/Wrap_macOS_nightly.zip: build/darwin/wrap
 	mkdir -p ./build/macOS/dist/wrap.app/Contents/MacOS
@@ -48,7 +52,10 @@ dist/Wrap_macOS_nightly.zip: build/darwin/wrap
 	zip -q -r $@ build/macOS/dist/wrap.app
 
 nightly: prime/bash-complete.sh prime/zsh-complete.sh \
-	dist/Wrap_Win64_nightly.exe dist/Wrap_macOS_nightly.zip
+	dist/Wrap_Linux_nightly.zip dist/Wrap_Win64_nightly.exe dist/Wrap_macOS_nightly.zip
+
+dist/Wrap_Linux.zip: dist/Wrap_Linux_nightly.zip
+	mv $< $@
 
 dist/Wrap_Win64.exe: dist/Wrap_Win64_nightly.exe
 	mv $< $@
@@ -56,4 +63,4 @@ dist/Wrap_Win64.exe: dist/Wrap_Win64_nightly.exe
 dist/Wrap_macOS.zip: dist/Wrap_macOS_nightly.zip
 	mv $< $@
 
-release: nightly dist/Wrap_Win64.exe dist/Wrap_macOS.zip
+release: nightly dist/Wrap_Linux.zip dist/Wrap_Win64.exe dist/Wrap_macOS.zip

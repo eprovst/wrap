@@ -1,3 +1,7 @@
+# direnv
+/.envrc
+/.direnv
+
 # Binaries for programs and plugins
 *.exe
 *.dll
